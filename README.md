@@ -25,4 +25,13 @@ It’s designed to make validation predictable, testable, and reusable — from simp
 
 
 
-. .  nuget release after this readme is done as V1 code is done.
+## nuget release after this readme is done.
+
+
+## Getting started
+
+Add the Validator.Core nuget package to your project using Nuget Package Manager or the dotnet CLI:
+
+```c#
+dotnet add package Validator.Core
+```
