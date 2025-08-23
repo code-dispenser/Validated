@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\assets\ValidatedKey.snk</AssemblyOriginatorKeyFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="CodeFile.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Validated.Core.Tests.Unit" key="0024000004800000940000000602000000240000525341310004000001000100ad9dc69e5c344595c60c6c5f9e7ca9b28cbd672f56b1d16d33a7972dc76061cd31d8821c15d14aed49a069692dfb363ab99ed27bd6cc802907150703976805c809c48c79a7047945023f93ebca26a8167bce7fb057295a3b9a8a09f70b046a4372969b0a443fe99f65a01aad70bd1df2babb8894a086930aedf623c5492530c1" />
+		<InternalsVisibleTo Include="Validated.Core.Tests.SharedDataFixtures" key="0024000004800000940000000602000000240000525341310004000001000100ad9dc69e5c344595c60c6c5f9e7ca9b28cbd672f56b1d16d33a7972dc76061cd31d8821c15d14aed49a069692dfb363ab99ed27bd6cc802907150703976805c809c48c79a7047945023f93ebca26a8167bce7fb057295a3b9a8a09f70b046a4372969b0a443fe99f65a01aad70bd1df2babb8894a086930aedf623c5492530c1" />
+		<InternalsVisibleTo Include="Validated.Core.Tests.Integration" key="0024000004800000940000000602000000240000525341310004000001000100ad9dc69e5c344595c60c6c5f9e7ca9b28cbd672f56b1d16d33a7972dc76061cd31d8821c15d14aed49a069692dfb363ab99ed27bd6cc802907150703976805c809c48c79a7047945023f93ebca26a8167bce7fb057295a3b9a8a09f70b046a4372969b0a443fe99f65a01aad70bd1df2babb8894a086930aedf623c5492530c1" />
+	</ItemGroup>
+</Project>
