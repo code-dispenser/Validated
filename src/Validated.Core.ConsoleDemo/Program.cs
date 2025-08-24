@@ -17,9 +17,9 @@ internal class Program
     */ 
     static async Task Main()
     {
-        //await The_Beginning_Validated_Of_T.Run();
+        await The_Beginning_Validated_Of_T.Run();
 
-        await MemberValidator_Building_Block.Run();
+        //await MemberValidator_Building_Block.Run();
 
         //await Built_In_MemberValidators.Run();
 
