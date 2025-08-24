@@ -24,7 +24,7 @@ public static class The_Beginning_Validated_Of_T
 
         var firstValidated = Hello("John");
 
-        await Console.Out.WriteLineAsync($"Is the result valid: {firstValidated.IsValid} - failures: {String.Join("\r\n", firstValidated.Failures.Select(f => f))} \r\n");
+        await Console.Out.WriteLineAsync($"Is the result valid: {firstValidated.IsValid} - failures: {String.Join("\r\n", firstValidated.Failures.Select(f => f.FailureMessage))} \r\n");
 
         await Console.Out.WriteLineAsync("Lets try that again using the input 'World'." + "\r\n");
         

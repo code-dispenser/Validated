@@ -52,14 +52,14 @@ public static class MemberValidator_Building_Block
       */
     public static MemberValidator<string> CreateHelloWorldValidator(string failureMessage)
 
-        => (valueToValidate, _, _, _) => // the delegate needs a value, we can just discard the other optional params if not needed (path, compareTo, cancellationToken)  
+        => (valueToValidate, path, _, _) => // the delegate needs a value, but we can discard optional params if not needed (path, compareTo, cancellationToken)  
         {
-            var isValid = valueToValidate == "World";
             /*
-                * Don't forget the delegate MemberValidator returns a Task<Validated<T>> so as we have no async stuff in here to await we just use Task.FromResult 
+                * The delegate MemberValidator returns a Task<Validated<T>> so as we have no async stuff in here to await we just use Task.FromResult 
             */ 
-            return isValid ? Task.FromResult(Validated<string>.Valid(valueToValidate)) 
-                           : Task.FromResult(Validated<string>.Invalid(new InvalidEntry(failureMessage)));//Don't forget MemberValidator returns a Task<Validated<T>> 
+            return (valueToValidate == "World") ? Task.FromResult(Validated<string>.Valid(valueToValidate)) 
+                                                    : Task.FromResult(Validated<string>.Invalid(new InvalidEntry(failureMessage,path)));
+                                                                                               //path is good to add as its populated when validating entities
         };   
         
 }
