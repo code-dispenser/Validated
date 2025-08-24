@@ -11,7 +11,7 @@ namespace Validated.Core.Common.Utilities;
 /// Tokens (e.g., display name, validated value, lengths, dates) are replaced to produce
 /// clear, consistent messages across validators.
 /// </remarks>
-public static class FailureMessages
+internal static class FailureMessages
 {
     /// <summary>
     /// Formats a general failure message by replacing standard tokens.

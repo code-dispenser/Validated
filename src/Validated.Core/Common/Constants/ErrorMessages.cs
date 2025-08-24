@@ -3,7 +3,7 @@
 internal static class ErrorMessages
 {
     /*
-        * Consts with User in them are seen by end users. 
+        * Constants with User in them are seen by end users. 
     */ 
     public const string Validator_Factory_User_Failure_Message      = "System validation error, please contact support.";
     public const string Validator_Creation_Error_Message            = "Unable to create the validator for rule: {ruleConfig}";

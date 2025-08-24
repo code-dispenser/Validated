@@ -11,7 +11,7 @@ namespace Validated.Core.Types;
 /// and the set of entities currently being validated. This prevents
 /// circular references and enforces recursion limits.
 /// </remarks>
-public record ValidatedContext
+public sealed record ValidatedContext
 {
     private readonly int _depth = 0;
     private readonly HashSet<object> _validatingInstances = new(ReferenceEqualityComparer.Instance);

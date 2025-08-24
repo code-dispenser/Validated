@@ -13,7 +13,7 @@
 /// readability and composability when working with functional patterns.
 /// </para>
 /// </remarks>
-public static class GeneralFunctional
+internal static class GeneralFunctional
 {
     /// <summary>
     /// Applies a function to a value in a fluent, functional style.

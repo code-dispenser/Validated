@@ -65,7 +65,6 @@ internal static class InternalCache
         return GeneralUtils.ExtractMemberName(selectorExpression.Body) ?? GeneralUtils.GenerateFallbackName<TMember>();
     }
 
-#if DEBUG
     public static void ClearCache()
     {
         _expressionStringCache.Clear();
@@ -82,7 +81,5 @@ internal static class InternalCache
             "ExpressionString"  => _expressionStringCache.Count,
             _ => 0
         };
-
-#endif
 
 }
