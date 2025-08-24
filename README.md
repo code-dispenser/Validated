@@ -1,3 +1,5 @@
+[![.NET](https://github.com/code-dispenser/Validated/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/code-dispenser/Validated/actions/workflows/dotnet.yml) 
+[![Coverage Status](https://coveralls.io/repos/github/code-dispenser/Validated/badge.svg?branch=main)](https://coveralls.io/github/code-dispenser/Validated?branch=main)
 <h1>
 <img src="https://raw.github.com/code-dispenser/Validated/main/assets/logo-64.png" align="center" alt="Conditionals icon" /> Validated
 </h1>
@@ -5,13 +7,13 @@
 A functional approach to validation in C#.
 
 Validated provides a composable, functional validation framework for .NET applications.
-It’s designed to make validation predictable, testable, and reusable — from simple property checks to validating complex object graphs, collections, and multi-tenant scenarios driven by configuration.
+Itâ€™s designed to make validation predictable, testable, and reusable â€” from simple property checks to validating complex object graphs, collections, and multi-tenant scenarios driven by configuration.
 
 ## Features
 
 - Validated<T> result type (or applicative functor for those who care) for all validations (valid or invalid with failure details).
 
-- MemberValidator<T> delegate as the core building block — create custom or use built-in validators.
+- MemberValidator<T> delegate as the core building block â€” create custom or use built-in validators.
 
 - Fluent ValidationBuilder<TEntity> for static/manual composition of validators.
 
@@ -122,7 +124,7 @@ public static class GeneralFieldValidators
 
     public static MemberValidator<string> GivenNameValidator() 
         
-        => MemberValidators.CreateStringRegexValidator(@"^(?=.{2,50}$)[A-Z][a-z]+$", "GivenName", "First name", "Must start with a capital and be 2–50 characters");
+        => MemberValidators.CreateStringRegexValidator(@"^(?=.{2,50}$)[A-Z][a-z]+$", "GivenName", "First name", "Must start with a capital and be 2â€“50 characters");
 
     public static MemberValidator<string> FamilyNameValidator() 
     
