@@ -103,6 +103,15 @@ public static class StaticData
         => new("TypeFullName", "PropertyName", "DisplayName", "RuleType", "MinMaxToValueType", "Pattern", "FailureMessage", 0, 0, "", "", "", "", "", ValidatedConstants.TargetType_Item, ValidatedConstants.Default_TenantID, ValidatedConstants.Default_CultureID, null, default);
 
 
+
+    public static ImmutableList<ValidationRuleConfig> ValidationRuleConfigsForValueObjectCompareTo()
+
+        => [
+               new ("Validated.Core.Tests.SharedDataFixtures.Common.Models.DateRange", "StartDate", "Start date", "RuleType_CompareTo", "MinMaxToValueType_DateOnly", "", "Must be less than 2000-06-15", 0, 0, "", "", "2000-06-15", "", "CompareType_LessThan"),
+               new ("Validated.Core.Tests.SharedDataFixtures.Common.Models.DateRange", "EndDate", "EndDate", "RuleType_VOComparison", "", "", "Must be greater than the start date", 0, 0, "", "", "", "", "CompareType_GreaterThan"),
+           ];
+
+
     public static Node BuildNodeChain(int count)
     {
         var root = new Node { Name = "Root" };
