@@ -23,7 +23,7 @@ public static class GeneralFieldValidators
 
     public static MemberValidator<string> FamilyNameValidator()
 
-       => MemberValidators.CreateStringRegexValidator(@"^[A-Z]+['\- ]?[A-Za-z]*['\- ]?[A-Za-z]+$", "FamilyName", "Surname", "Must start with a capital letter")
+       => MemberValidators.CreateStringRegexValidator(@"^[A-Z]+['\- ]?[A-Za-z]*['\- ]?[A-Za-z]*$", "FamilyName", "Surname", "Must start with a capital letter")
             .AndThen(MemberValidators.CreateStringLengthValidator(2, 50, "FamilyName", "Surname", "Must be between 2 and 50 characters in length"));
 
     public static MemberValidator<int> AgeValidator()
