@@ -86,7 +86,7 @@ public static class StaticData
                 new("Validated.Core.Tests.SharedDataFixtures.Common.Models.AddressDto", "Postcode", "Postcode", "RuleType_Regex", "MinMaxToValueType_String", @"^(GIR 0AA)|((([ABCDEFGHIJKLMNOPRSTUWYZ][0-9][0-9]?)|(([ABCDEFGHIJKLMNOPRSTUWYZ][ABCDEFGHKLMNOPQRSTUVWXY][0-9][0-9]?)|(([ABCDEFGHIJKLMNOPRSTUWYZ][0-9][ABCDEFGHJKSTUW])|([ABCDEFGHIJKLMNOPRSTUWYZ][ABCDEFGHKLMNOPQRSTUVWXY][0-9][ABEHMNPRVWXY])))) [0-9][ABDEFGHJLNPQRSTUWXYZ]{2})$",
                                                                                             "Must be a valid UK formatted postcode.", 5, 15),
 
-                new("Validated.Core.Tests.SharedDataFixtures.Common.Models.ContactMethodDto", "ContactMethods", "Contact methods", ValidatedConstants.RuleType_CollectionLength, "", "", "Must have at least 1 item but no more than 10", 1, 10, "", "","","", ""),
+                new("Validated.Core.Tests.SharedDataFixtures.Common.Models.ContactMethodDto", "ContactMethods", "Contact methods", ValidatedConstants.RuleType_CollectionLength, "", "", "Must have at least 1 item but no more than 10", 1, 10, "", "","","", "",ValidatedConstants.TargetType_Collection),
                 new("Validated.Core.Tests.SharedDataFixtures.Common.Models.ContactMethodDto", "MethodType", "Contact method", "RuleType_StringLength", "", "", "Must be between 2 and 20 characters", 2, 20, "", "","","", ""),
                 new("Validated.Core.Tests.SharedDataFixtures.Common.Models.ContactMethodDto", "MethodValue", "Value","RuleType_StringLength", "", "", "Must be between 2 and 20 characters", 2, 20, "", "","","", ""),
 
