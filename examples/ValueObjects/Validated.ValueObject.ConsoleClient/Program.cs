@@ -93,7 +93,15 @@ internal class Program
 
         builder.RegisterModule<InfrastructureAutofacModule>();
         builder.RegisterModule<ApplicationAutofacModule>();
+
+        /*
+            * Validators for the config data are created from factories that are stored inside this class so just register it as a singleton.
+            * 
+            * Equally the ValidatorFactoryProvider is where you can add you own custom config driven validators via its AddOrUpdateFactory method.
+        */
         builder.RegisterType<ValidatorFactoryProvider>().As<IValidatorFactoryProvider>().SingleInstance();
+
+
         builder.RegisterType<ApplicationFacade>().AsSelf().SingleInstance();
 
 
