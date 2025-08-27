@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -51,22 +52,22 @@ public sealed class ValidatorFactoryProvider : IValidatorFactoryProvider
     /// error tracking and diagnostics throughout the validation process.
     /// </para>
     /// </remarks>
-    public ValidatorFactoryProvider(ILoggerFactory loggerFactory)
+    public ValidatorFactoryProvider(ILoggerFactory? loggerFactory = null)
     {
-        _logger = loggerFactory.CreateLogger<ValidatorFactoryProvider>();
+        _logger = loggerFactory?.CreateLogger<ValidatorFactoryProvider>() ?? NullLogger<ValidatorFactoryProvider>.Instance;
 
 
         _validationFactories = new()
         {
             [ValidatedConstants.RuleType_NotFound]         = new FailingValidatorFactory(),
-            [ValidatedConstants.RuleType_Regex]            = new RegexValidatorFactory(loggerFactory.CreateLogger<RegexValidatorFactory>()),
-            [ValidatedConstants.RuleType_StringLength]     = new StringLengthValidatorFactory(loggerFactory.CreateLogger<StringLengthValidatorFactory>()),
-            [ValidatedConstants.RuleType_Range]            = new RangeValidatorFactory(loggerFactory.CreateLogger<RangeValidatorFactory>()),
-            [ValidatedConstants.RuleType_RollingDate]      = new RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.UtcNow), loggerFactory.CreateLogger<RollingDateOnlyValidatorFactory>()),
-            [ValidatedConstants.RuleType_MemberComparison] = new ComparisonValidatorFactory(loggerFactory.CreateLogger<ComparisonValidatorFactory>(), ComparisonTypeFor.EntityObject),
-            [ValidatedConstants.RuleType_CompareTo]        = new ComparisonValidatorFactory(loggerFactory.CreateLogger<ComparisonValidatorFactory>(), ComparisonTypeFor.Value),
-            [ValidatedConstants.RuleType_VOComparison]     = new ComparisonValidatorFactory(loggerFactory.CreateLogger<ComparisonValidatorFactory>(), ComparisonTypeFor.ValueObject),
-            [ValidatedConstants.RuleType_CollectionLength] = new CollectionLengthValidatorFactory(loggerFactory.CreateLogger<CollectionLengthValidatorFactory>()),
+            [ValidatedConstants.RuleType_Regex]            = new RegexValidatorFactory(loggerFactory?.CreateLogger<RegexValidatorFactory>() ?? NullLogger<RegexValidatorFactory>.Instance),
+            [ValidatedConstants.RuleType_StringLength]     = new StringLengthValidatorFactory(loggerFactory?.CreateLogger<StringLengthValidatorFactory>() ?? NullLogger<StringLengthValidatorFactory>.Instance),
+            [ValidatedConstants.RuleType_Range]            = new RangeValidatorFactory(loggerFactory?.CreateLogger<RangeValidatorFactory>() ?? NullLogger<RangeValidatorFactory>.Instance),
+            [ValidatedConstants.RuleType_RollingDate]      = new RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.UtcNow), loggerFactory?.CreateLogger<RollingDateOnlyValidatorFactory>() ?? NullLogger<RollingDateOnlyValidatorFactory>.Instance),
+            [ValidatedConstants.RuleType_MemberComparison] = new ComparisonValidatorFactory(loggerFactory?.CreateLogger<ComparisonValidatorFactory>() ?? NullLogger<ComparisonValidatorFactory>.Instance, ComparisonTypeFor.EntityObject),
+            [ValidatedConstants.RuleType_CompareTo]        = new ComparisonValidatorFactory(loggerFactory?.CreateLogger<ComparisonValidatorFactory>() ?? NullLogger<ComparisonValidatorFactory>.Instance, ComparisonTypeFor.Value),
+            [ValidatedConstants.RuleType_VOComparison]     = new ComparisonValidatorFactory(loggerFactory?.CreateLogger<ComparisonValidatorFactory>() ?? NullLogger<ComparisonValidatorFactory>.Instance, ComparisonTypeFor.ValueObject),
+            [ValidatedConstants.RuleType_CollectionLength] = new CollectionLengthValidatorFactory(loggerFactory?.CreateLogger<CollectionLengthValidatorFactory>() ?? NullLogger<CollectionLengthValidatorFactory>.Instance),
         };
     }
 
@@ -79,8 +80,8 @@ public sealed class ValidatorFactoryProvider : IValidatorFactoryProvider
     /// </param>
     /// <returns>
     /// The <see cref="IValidatorFactory"/> instance registered for the specified rule type.
-    /// If no factory is found for the rule type, returns the default failing validator factory
-    /// which produces validation errors indicating the rule type is not supported.
+    /// If no factory is found for the rule type, an error is logged and the method returns the default 
+    /// failing validator factory which produces validation errors indicating the rule type is not supported.
     /// </returns>
     /// <remarks>
     /// This method provides a safe fallback mechanism - it never throws exceptions for unknown
@@ -88,12 +89,14 @@ public sealed class ValidatorFactoryProvider : IValidatorFactoryProvider
     /// error messages.
     /// </remarks>
     public IValidatorFactory GetValidatorFactory(string ruleType)
+    {
+        if (true == _validationFactories.TryGetValue(ruleType, out var validationFactory)) return validationFactory;
 
-        => (_validationFactories.TryGetValue(ruleType, out var validationFactory) == true)
-                ? validationFactory
-                    : _validationFactories[ValidatedConstants.RuleType_NotFound];
+        _logger.LogError(ErrorMessages.Validator_Factory_Not_Found,ruleType);
 
+        return _validationFactories[ValidatedConstants.RuleType_NotFound];
 
+    }
     /// <summary>
     /// Registers or updates a validator factory for the specified rule type.
     /// </summary>

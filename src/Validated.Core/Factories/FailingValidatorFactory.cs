@@ -38,5 +38,5 @@ internal sealed class FailingValidatorFactory : IValidatorFactory
 
         => (_, path, _, _)
         
-            => Task.FromResult(Validated<T>.Invalid(new InvalidEntry(ErrorMessages.Validator_Factory_User_Failure_Message, path, ruleConfig.PropertyName, ruleConfig.DisplayName)));
+            => Task.FromResult(Validated<T>.Invalid(new InvalidEntry(ErrorMessages.Validator_Factory_User_Failure_Message, path, ruleConfig.PropertyName, ruleConfig.DisplayName, CauseType.SystemError)));
 }

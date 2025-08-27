@@ -39,6 +39,29 @@ public class ValidatorFactoryProvider_Tests
       
     }
 
+    [Theory]
+    [InlineData(ValidatedConstants.RuleType_Range, typeof(RangeValidatorFactory))]
+    [InlineData(ValidatedConstants.RuleType_Regex, typeof(RegexValidatorFactory))]
+    [InlineData(ValidatedConstants.RuleType_StringLength, typeof(StringLengthValidatorFactory))]
+
+    [InlineData(ValidatedConstants.RuleType_CompareTo, typeof(ComparisonValidatorFactory))]
+    [InlineData(ValidatedConstants.RuleType_MemberComparison, typeof(ComparisonValidatorFactory))]
+    [InlineData(ValidatedConstants.RuleType_VOComparison, typeof(ComparisonValidatorFactory))]
+
+    [InlineData(ValidatedConstants.RuleType_RollingDate, typeof(RollingDateOnlyValidatorFactory))]
+    [InlineData(ValidatedConstants.RuleType_NotFound, typeof(FailingValidatorFactory))]
+    [InlineData("NOT_A_RULE_TYPE", typeof(FailingValidatorFactory))]
+    public void All_validators_should_be_created_with_a_null_logger_if_the_logging_factory_is_not_provided(string ruleType, Type expectedFactoryType)
+    {
+        var validatorProviderFactory = new ValidatorFactoryProvider();
+        var factory                  = validatorProviderFactory.GetValidatorFactory(ruleType);
+
+        factory.Should().BeOfType(expectedFactoryType);
+
+    }
+
+
+
     [Fact]
     public void Should_be_able_to_add_validator_update_without_exception()
     {
