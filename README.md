@@ -225,10 +225,10 @@ Just uncomment the section you want to run in `Program.cs`.
 ## 8. Roadmap
 Full documentation (working on).
 
-Advanced scenario solutions in to placed in the /examples folder (working on) showing:
+Advanced scenario solutions to be placed in the /examples folder showing:
 
 - Multi-tenant configuration-driven validators (TenantValidationBuilder)
 
 - Validating domain value objects without polluting your domain model (Done)
 
-- Advanced collection and recursive scenarios
+- Advanced collection and recursive scenarios (working on)
