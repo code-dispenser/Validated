@@ -228,7 +228,8 @@ Full documentation (working on).
 Advanced scenario solutions to be placed in the /examples folder showing:
 
 - Multi-tenant configuration-driven validators (TenantValidationBuilder)
+- Validating domain value objects without polluting your domain model (Done).
+- Advanced collection and recursive scenarios (Done).
+- Creating a custom multi-tenant / dynamic config based validator (Done).
 
-- Validating domain value objects without polluting your domain model (Done)
 
-- Advanced collection and recursive scenarios (working on)
