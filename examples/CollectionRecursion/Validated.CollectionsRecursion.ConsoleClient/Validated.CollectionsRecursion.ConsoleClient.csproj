@@ -15,8 +15,4 @@
     <PackageReference Include="Validated.Core" Version="1.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\SharedValidators\" />
-  </ItemGroup>
-
 </Project>
