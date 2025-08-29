@@ -27,10 +27,10 @@ It’s designed to make validation predictable, testable, and reusable — from 
 
 ## 1. Getting started
 
-Add the Validator.Core nuget package to your project using Nuget Package Manager or the dotnet CLI:
+Add the Validated.Core nuget package to your project using Nuget Package Manager or the dotnet CLI:
 
 ```csharp
-dotnet add package Validator.Core
+dotnet add package Validated.Core
 ```
 
 ## 2. The basics - Validated&lt;T&gt; Type, used for all returns (the seed that sprouted to form this library).
