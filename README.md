@@ -95,8 +95,8 @@ validatedName.Failures.ToList().ForEach(f => Console.WriteLine(f.FailureMessage)
 // Must be between 2 and 50 characters in length
 
 ```
-## 5. Using the ValidationBuilder&lt;T&gt; 
-For validating complex objects, the `ValidationBuilder<T>` provides a fluent and discoverable API.
+## 5. Using the ValidationBuilder&lt;TEntity&gt; 
+For validating complex objects, the `ValidationBuilder<TEntity>` provides a fluent and discoverable API.
 
 ```csharp
 
@@ -207,8 +207,8 @@ var contactValidator = ValidationBuilder<ContactDto>.Create()
 var validated = await contactValidator(contact)
 ```
 
-## 6. Advanced Usage: Dynamic Validation with TenantValidationBuilder&lt;T&gt;
-For multi-tenant applications or scenarios where validation rules need to be dynamic, the library provides the `TenantValidationBuilder<T>`.
+## 6. Advanced Usage: Dynamic Validation with TenantValidationBuilder&lt;TEntity&gt;
+For multi-tenant applications or scenarios where validation rules need to be dynamic, the library provides the `TenantValidationBuilder<TEntity>`.
 
 Instead of providing validator instances directly, this builder creates them at runtime from a list of `ValidationRuleConfig` objects. This configuration data can be loaded from a database, a JSON file, or any other source, and can be cached and periodically refreshed. 
 It supports tenant- and culture-specific rule resolution. But just like the rest of the library everything is comprised of the `MemberValidator<T>` delegate, so just functions all the way until your `Validated<T>` return (all without reflection or source generators).  
