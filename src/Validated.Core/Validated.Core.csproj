@@ -16,16 +16,16 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/code-dispenser/Validated</RepositoryUrl>
     <PackageTags>validation;validator;data-validation;functional;functional-programming;fluent;csharp;.net;domain-driven-design;multi-tenant</PackageTags>
-	<Version>1.0.1</Version>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <FileVersion>1.0.1</FileVersion>
-	<InformationalVersion>1.0.1</InformationalVersion>
+	<Version>1.0.2</Version>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <FileVersion>1.0.2</FileVersion>
+	<InformationalVersion>1.0.2</InformationalVersion>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	<Deterministic>true</Deterministic>
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-	<PackageReleaseNotes>Changed the IloggerFactory in the ValidatorFactoryProvider constructor to be optional so it is not required to use logging for multi-tenant/dynamic config driven validations althouth it is highly recommended that you do so.</PackageReleaseNotes>
+	<PackageReleaseNotes>Amended the readme, corrected some xml comments</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

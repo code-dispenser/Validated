@@ -316,7 +316,7 @@ public class TenantValidationBuilder<TEntity> where TEntity : notnull
     }
 
     /// <summary>
-    /// Configures comparison validation using validators created from rule configurations that operate on the entire entity.
+    /// Configures comparison validation using validators created from rule configurations that compares one entity member to another or to a provided value in the configuration data.
     /// </summary>
     /// <typeparam name="TMember">
     /// The type of the member being used to provide comparison context.

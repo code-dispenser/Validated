@@ -9,6 +9,8 @@ A functional approach to validation in C#.
 Validated provides a composable, functional validation framework for .NET applications.
 It’s designed to make validation predictable, testable, and reusable — from simple property checks to validating complex object graphs, collections, and multi-tenant scenarios driven by configuration.
 
+**Full documentation available at:** https://code-dispenser.gitbook.io/validated-docs
+
 ## Features
 
 - Validated<T> result type (or applicative functor for those who care) for all validations (valid or invalid with failure details).
@@ -24,6 +26,7 @@ It’s designed to make validation predictable, testable, and reusable — from 
 - Built-in validators for common use cases (regex, length, comparisons, etc.).
 
 - Fully async to support your own async validators.
+
 
 ## 1. Getting started
 

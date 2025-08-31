@@ -262,7 +262,7 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
         => AddValidator(ValidatorExtensions.ForCollection(selectorExpression, validator));
 
     /// <summary>
-    /// Configures comparison validation using a member validator that operates on the entire entity with context from a specific member.
+    /// Configures comparison validation using a validator that compares one entity member to another or to a provided value.
     /// </summary>
     /// <typeparam name="TMember">
     /// The type of the member being used to provide comparison context.
@@ -272,8 +272,7 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
     /// This member's name is used in the validation path but the validator receives the entire entity.
     /// </param>
     /// <param name="validator">
-    /// The member validator that operates on the entire entity to perform comparison validation.
-    /// This enables validation scenarios where multiple entity properties need to be compared.
+    /// The member validator that operates on the entity member to perform the desired comparison validation.
     /// </param>
     /// <returns>
     /// The current ValidationBuilder instance to enable fluent method chaining.

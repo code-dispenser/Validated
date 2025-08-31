@@ -244,9 +244,8 @@ public sealed class ValidatorFactoryProvider : IValidatorFactoryProvider
     {
 
         var targetType         = DetermineTargetType<T>();
-        var targetTypeFallback = typeof(T).FullName;
-
-        return configurations.Where(c => c.TypeFullName == typeFullName && c.PropertyName == propertyName && (c.TargetType == targetType || c.TargetType == targetTypeFallback))
+ 
+        return configurations.Where(c => c.TypeFullName == typeFullName && c.PropertyName == propertyName && c.TargetType == targetType)
                 .GroupBy(c => new { c.RuleType, c.Pattern, c.MinLength, c.MaxLength, c.MinValue, c.MaxValue, c.CompareValue, c.ComparePropertyName, c.CompareType })  // Group by uniquely identifying rule content (NOT by tenant/culture)
                 .Select(ruleGroup =>
                 {
