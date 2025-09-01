@@ -8,13 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.8" />
-    <PackageReference Include="Validated.Core" Version="1.0.2" />
+    <Compile Remove="Common\Data\**" />
+    <EmbeddedResource Remove="Common\Data\**" />
+    <None Remove="Common\Data\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Data\" />
+    <PackageReference Include="Autofac" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.8" />
+    <PackageReference Include="Validated.Core" Version="1.0.3" />
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.8.0" />
-    <PackageReference Include="Validated.Core" Version="1.0.2" />
+    <PackageReference Include="Validated.Core" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,9 +1,11 @@
 [![.NET](https://github.com/code-dispenser/Validated/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/code-dispenser/Validated/actions/workflows/dotnet.yml) 
 [![Coverage Status](https://coveralls.io/repos/github/code-dispenser/Validated/badge.svg?branch=main)](https://coveralls.io/github/code-dispenser/Validated?branch=main)
 <h1>
-<img src="https://raw.github.com/code-dispenser/Validated/main/assets/logo-64.png" align="center" alt="Conditionals icon" /> Validated
+<img src="https://raw.github.com/code-dispenser/Validated/main/assets/logo-64.png" align="center" alt="Validated icon" /> Validated
 </h1>
-
+<!--
+# ![icon](https://raw.githubusercontent.com/code-dispenser/validated/main/assets/logo-64.png) Validated
+-->
 A functional approach to validation in C#.
 
 Validated provides a composable, functional validation framework for .NET applications.
