@@ -222,6 +222,22 @@ public class TenantValidationBuilder_Tests
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true &&  v.Failures.Count == 0);
     }
 
+    [Fact]
+    public async Task Tenant_validation_builder_for_comparison_with_value_should_add_a_validator_to_compare_with_the_config_value()
+    {
+        var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilderCompareTo();//set to compare age (greater or equal to) 18 in config
+        var contact = StaticData.CreateContactObjectGraph();
+        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+
+        contact.Age = 18;
+
+        var validator = builder.ForComparisonWithValue<int>(c => c.Age).Build();
+        var validated = await validator(contact, nameof(ContactDto));
+
+        validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true &&  v.Failures.Count == 0);
+    }
+
+
 
     [Fact]
     public async Task Tenant_validation_builder_for_each_collection_member_should_add_a_validator_for_the_collection_entity_item()
@@ -363,16 +379,9 @@ public class TenantValidationBuilder_Tests
             validated.Failures[5].FailureMessage.Should().Be(ErrorMessages.Validator_Max_Depth_Exceeded_User_Message);
         }
     }
+
+
+
+
 }
 
-    //    var nodeChain = StaticData.BuildNodeChain(100);
-
-
-    //var childValidator = ValidationBuilder<Node>.Create()
-    //                        .ForMember(n => n.Name, MemberValidators.CreateStringLengthValidator(6, 10, "Name", "Name", "Should be between 5 and 10 characters in length")).Build();
-
-    //var validator = ValidationBuilder<Node>.Create()
-    //                    .ForRecursiveEntity(c => c.Child, childValidator)
-    //                        .Build();
-
-    //var validated = await validator(nodeChain, "", new(new ValidationOptions { MaxRecursionDepth = 5 }));//5 + 1 max depth message

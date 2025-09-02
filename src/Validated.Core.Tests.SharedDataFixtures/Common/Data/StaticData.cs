@@ -98,6 +98,12 @@ public static class StaticData
                 new("Validated.Core.Tests.SharedDataFixtures.Common.Models.ContactDto", "DOB", "Date of birth", ValidatedConstants.RuleType_MemberComparison, ValidatedConstants.MinMaxToValueType_DateOnly, "", "Date of birth should match Compare date of birth", 0, 0, "", "", "", "CompareDOB",ValidatedConstants.CompareType_EqualTo),
            ];
 
+    public static ImmutableList<ValidationRuleConfig> ValidationRuleConfigsForTenantValidationBuilderCompareTo()
+
+        => [
+                new("Validated.Core.Tests.SharedDataFixtures.Common.Models.ContactDto", "Age", "Age", ValidatedConstants.RuleType_CompareTo, ValidatedConstants.MinMaxToValueType_Int32, "", "Should be 18 or over", 0, 0, "", "", "18", "",ValidatedConstants.CompareType_GreaterThanOrEqual),
+           ];
+
     public static ValidationRuleConfig BaseValidationRuleConfigsForGetConfigTests()
 
         => new("TypeFullName", "PropertyName", "DisplayName", "RuleType", "MinMaxToValueType", "Pattern", "FailureMessage", 0, 0, "", "", "", "", "", ValidatedConstants.TargetType_Item, ValidatedConstants.Default_TenantID, ValidatedConstants.Default_CultureID, null, default);

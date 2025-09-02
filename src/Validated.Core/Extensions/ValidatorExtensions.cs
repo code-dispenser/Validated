@@ -360,6 +360,40 @@ public static class ValidatorExtensions
     }
 
     /// <summary>
+    /// Creates an entity validator that applies a member validator to a selected property value for validation purposes.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of the entity to validate.</typeparam>
+    /// <typeparam name="TMember">The type of the member being validated.</typeparam>
+    /// <param name="validator">The member validator to apply to the selected property value.</param>
+    /// <param name="selectorExpression">Expression that selects the member property to validate.</param>
+    /// <returns>An entity validator that validates the selected member and returns the original entity.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the <paramref name="selectorExpression"/> attempts to perform nested
+    /// member access (e.g. <c>c => c.Address.Postcode</c>), which is not supported.
+    /// Use <see cref="ForNestedEntityMember"/> instead.
+    /// </exception>
+    public static EntityValidator<TEntity> ToCompareEntityValue<TEntity, TMember>(this MemberValidator<TMember> validator, Expression<Func<TEntity, TMember>> selectorExpression) where TEntity : notnull where TMember : notnull
+    {
+        GeneralUtils.GuardAgainstDeepMemberAccess(selectorExpression);
+
+        var compiledSelector = InternalCache.GetAddMemberExpression(selectorExpression);
+        var memberName = InternalCache.GetAddMemberName(selectorExpression);
+
+        return async (entity, path, _, cancellationToken) =>
+        {
+
+            if (entity is null) return Validated<TEntity>.Invalid(new InvalidEntry(ErrorMessages.Validator_Entity_Null_User_Message, typeof(TEntity).Name, memberName, memberName, CauseType.SystemError));
+
+            var rootPath = EnsureRootPath<TEntity>(path);
+            var value = compiledSelector(entity);
+            var fullPath = GeneralUtils.BuildFullPath(rootPath, memberName);
+
+            return (await validator(value, fullPath, default, cancellationToken).ConfigureAwait(false)).Map(_ => entity);
+        };
+    }
+
+
+    /// <summary>
     /// Creates a recursive entity validator that can validate entities containing references to themselves.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity that contains recursive references.</typeparam>

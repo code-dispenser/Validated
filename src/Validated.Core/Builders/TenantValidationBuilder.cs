@@ -316,7 +316,7 @@ public class TenantValidationBuilder<TEntity> where TEntity : notnull
     }
 
     /// <summary>
-    /// Configures comparison validation using validators created from rule configurations that compares one entity member to another or to a provided value in the configuration data.
+    /// Configures comparison validation using validators created from rule configurations that compares one entity member to another.
     /// </summary>
     /// <typeparam name="TMember">
     /// The type of the member being used to provide comparison context.
@@ -340,6 +340,22 @@ public class TenantValidationBuilder<TEntity> where TEntity : notnull
 
         return AddValidatorIfNotExists(memberName, validator.ToCompareEntityMember(selectorExpression));
     }
+
+    /// <summary>
+    /// Adds validation for a member property using tenant-specific rules for value comparison operations.
+    /// </summary>
+    /// <typeparam name="TMember">The type of the member property to validate.</typeparam>
+    /// <param name="selectorExpression">Expression that selects the member property to validate.</param>
+    /// <returns>The current builder instance for method chaining.</returns>
+    public TenantValidationBuilder<TEntity> ForComparisonWithValue<TMember>(Expression<Func<TEntity, TMember>> selectorExpression) where TMember : notnull
+    {
+        var memberName = GeneralUtils.GetMemberName(selectorExpression);
+        var validator = _factoryProvider.CreateValidator<TMember>(_entityTypeFullName, memberName, _ruleConfigs, _tenantID, _cultureID);
+
+        return AddValidatorIfNotExists(memberName, validator.ToCompareEntityValue(selectorExpression));
+    }
+
+
 
     /// <summary>
     /// Configures recursive validation for entities that contain references to themselves.

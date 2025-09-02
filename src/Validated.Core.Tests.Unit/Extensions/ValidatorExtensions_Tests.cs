@@ -385,7 +385,7 @@ public class ValidatorExtensions_Tests
     public class ToCompareEntityMember
     {
         [Fact]
-        public async Task For_entity_member_should_return_an_invalid_validated_if_the_entity_is_null()
+        public async Task ToCompare_entity_member_should_return_an_invalid_validated_if_the_entity_is_null()
         {
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<ContactDto>();
             var entityValidator = ValidatorExtensions.ToCompareEntityMember<ContactDto, DateOnly>(memberValidator, c => c.DOB);
@@ -401,7 +401,7 @@ public class ValidatorExtensions_Tests
         }
 
         [Fact]
-        public async Task ToCompareEntityMember_should_return_a_valid_validated_if_the_comparison_passes_validation()
+        public async Task ToCompare_entity_member_should_return_a_valid_validated_if_the_comparison_passes_validation()
         {
             var contact = StaticData.CreateContactObjectGraph();
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<ContactDto>();
@@ -413,7 +413,7 @@ public class ValidatorExtensions_Tests
         }
 
         [Fact]
-        public async Task ToCompareEntityMember_should_return_an_invalid_validated_if_the_comparison_fails_validation()
+        public async Task ToCompare_entity_member_should_return_an_invalid_validated_if_the_comparison_fails_validation()
         {
             var contact = StaticData.CreateContactObjectGraph();
             var memberValidator = StubbedValidators.CreateFailingMemberValidator<ContactDto>(nameof(ContactDto.DOB), "Date of birth", "Comparison failed");
@@ -429,6 +429,57 @@ public class ValidatorExtensions_Tests
             }
         }
     }
+
+
+    public class ToCompareEntityValue
+    {
+        [Fact]
+        public async Task To_compare_entity_value_should_return_an_invalid_validated_if_the_entity_is_null()
+        {
+            var memberValidator = StubbedValidators.CreatePassingMemberValidator<DateOnly>();
+            var entityValidator = ValidatorExtensions.ToCompareEntityValue<ContactDto, DateOnly>(memberValidator, c => c.DOB);
+
+            var validated = await entityValidator(null!);
+
+            using (new AssertionScope())
+            {
+                validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == nameof(ContactDto) && i.PropertyName == nameof(ContactDto.DOB) && i.DisplayName == nameof(ContactDto.DOB)
+                                                                && i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message && i.Cause == CauseType.SystemError);
+            }
+        }
+
+        [Fact]
+        public async Task ToCompare_entity_value_should_return_a_valid_validated_if_the_comparison_passes_validation()
+        {
+            var contact = StaticData.CreateContactObjectGraph();
+            var memberValidator = StubbedValidators.CreatePassingMemberValidator<DateOnly>();
+
+            var entityValidator = ValidatorExtensions.ToCompareEntityValue<ContactDto, DateOnly>(memberValidator, c => c.DOB);
+            var validated = await entityValidator(contact);
+
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
+        }
+
+
+        [Fact]
+        public async Task ToCompare_entity_value_should_return_an_invalid_validated_if_the_comparison_fails_validation()
+        {
+            var contact = StaticData.CreateContactObjectGraph();
+            var memberValidator = StubbedValidators.CreateFailingMemberValidator<DateOnly>(nameof(ContactDto.DOB), "Date of birth", "Comparison failed");
+
+            var entityValidator = ValidatorExtensions.ToCompareEntityValue<ContactDto, DateOnly>(memberValidator, c => c.DOB);
+            var validated = await entityValidator(contact);
+
+            using (new AssertionScope())
+            {
+                validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == $"{nameof(ContactDto)}.{nameof(ContactDto.DOB)}" && i.PropertyName == nameof(ContactDto.DOB)
+                                                              &&  i.DisplayName == "Date of birth" && i.FailureMessage=="Comparison failed" && i.Cause == CauseType.Validation);
+            }
+        }
+    }
+
 
 
     public class ForEachPrimitiveItem
