@@ -116,10 +116,17 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
     /// </returns>
     internal MemberValidator<T> CompareValues<T>(ValidationRuleConfig ruleConfig) where T : notnull
         
-        => (valueToValidate, path,_, _) =>
+        => (entity, path,_, _) =>
         {
+            object valueToValidate = default!;
+
             try
             {
+                var entityType    = typeof(T);
+                var valueProperty = entityType.GetProperty(ruleConfig.PropertyName);
+
+                valueToValidate  = valueProperty!.GetValue(entity)!;
+
                 var systemType   = Type.GetType($"System.{ruleConfig.MinMaxToValueType.Split("_")[1]}")!;
 
                 IComparable compareTo = systemType switch
@@ -136,7 +143,7 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
 
                 var failureMessage = result ? "" : FailureMessages.FormatCompareValueMessage(ruleConfig.FailureMessage, GeneralUtils.FromValue(valueToValidate), ruleConfig.DisplayName, GeneralUtils.FromValue(compareTo));
 
-                var validated = result ? Validated<T>.Valid(valueToValidate)
+                var validated = result ? Validated<T>.Valid(entity)
                                             : Validated<T>.Invalid(new InvalidEntry(failureMessage, path, ruleConfig.PropertyName, ruleConfig.DisplayName,  cause));
 
                 return Task.FromResult(validated);

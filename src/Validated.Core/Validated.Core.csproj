@@ -16,16 +16,17 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/code-dispenser/Validated</RepositoryUrl>
     <PackageTags>validation;validator;data-validation;functional;functional-programming;fluent;csharp;.net;domain-driven-design;multi-tenant</PackageTags>
-	<Version>1.0.3</Version>
-    <AssemblyVersion>1.0.2</AssemblyVersion>
-    <FileVersion>1.0.3</FileVersion>
-	<InformationalVersion>1.0.3</InformationalVersion>
+	<Version>1.0.4</Version>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
+	<InformationalVersion>1.0.4</InformationalVersion>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	<Deterministic>true</Deterministic>
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-	<PackageReleaseNotes>Amended the readme, corrected some more xml comments</PackageReleaseNotes>
+	<PackageReleaseNotes>Fixed issue in the ComparisonValidatorFactory that affected Tenant Member comparisons 
+against the value entered in the configuration data.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

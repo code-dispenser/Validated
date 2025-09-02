@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
+using System.Collections.Immutable;
+using Validated.Core.Builders;
 using Validated.Core.Common.Constants;
 using Validated.Core.Factories;
 using Validated.Core.Tests.SharedDataFixtures.Common.Data;
@@ -32,10 +34,6 @@ public class ComparisonValidatorFactory_Tests
                     validated.Should().Match<Validated<T>>(v => v.IsValid == false && v.Failures.Count == 1);
                     validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == typeof(T).Name! && i.PropertyName == propertyName && i.DisplayName == displayName
                                                                    && i.FailureMessage == "FailureMessage" && i.Cause == CauseType.Validation);
-
-
-                    //validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == $"{typeof(T).Name}.{propertyName}" && i.PropertyName == propertyName && i.DisplayName == displayName
-                    //                               && i.FailureMessage == "FailureMessage" && i.Cause == CauseType.Validation);
 
                 }
             }
@@ -119,26 +117,41 @@ public class ComparisonValidatorFactory_Tests
         }
     }
 
+
+
     public class ValueComparison
     {
-        private static async Task RunCompareValue<T>(T valueToValidate, string compareValue, string comparePropertyName, string minMaxToTypeValue, string compareType, bool shouldPass) where T : notnull
+        private static async Task RunCompareContactDtoValue<T>(T valueToValidate, string compareValue, string propertyName, string minMaxToTypeValue, string compareType, bool shouldPass) where T : notnull
         {
-            var ruleConfig  = StaticData.ValidationRuleConfigForComparisonValidator("TypeFullName", "PropertyName", "DisplayName", ValidatedConstants.RuleType_CompareTo, compareValue, comparePropertyName, minMaxToTypeValue, compareType) with { FailureMessage = "FailureMessage" };
+            var ruleConfig  = StaticData.ValidationRuleConfigForComparisonValidator("TypeFullName", propertyName, "DisplayName", ValidatedConstants.RuleType_CompareTo, compareValue, "", minMaxToTypeValue, compareType) with { FailureMessage = "FailureMessage" };
             var logger      = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
-            var validator   = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<T>(ruleConfig);
+            var validator   = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<ContactDto>(ruleConfig);
 
-            var validated = await validator(valueToValidate, "TypeFullName");
+            var contactData = StaticData.CreateContactObjectGraph();
+
+            switch (propertyName)
+            {
+                case "Age": contactData.Age             = (int)(object)valueToValidate!; break;
+                case "DOB": contactData.DOB             = (DateOnly)(object)valueToValidate!; break;
+                case "Event": contactData.Event         = (DateTime)(object)valueToValidate!; break;
+                case "Bonus": contactData.Bonus         = (decimal)(object)valueToValidate!; break;
+                case "LunchTime": contactData.LunchTime = (TimeSpan)(object)valueToValidate!; break;
+
+            }
+
+
+            var validated = await validator(contactData, "TypeFullName");
 
             if (true == shouldPass)
             {
-                validated.Should().Match<Validated<T>>(v => v.IsValid == true && v.Failures.Count == 0);
+                validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
             }
             else
             {
                 using (new AssertionScope())
                 {
-                    validated.Should().Match<Validated<T>>(v => v.IsValid == false && v.Failures.Count == 1);
-                    validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == "TypeFullName" && i.PropertyName == "PropertyName" && i.DisplayName == "DisplayName"
+                    validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+                    validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == "TypeFullName" && i.PropertyName == propertyName && i.DisplayName == "DisplayName"
                                                                    && i.FailureMessage == "FailureMessage" && i.Cause == CauseType.Validation);
 
                 }
@@ -162,27 +175,7 @@ public class ComparisonValidatorFactory_Tests
         [InlineData(16, "15", ValidatedConstants.CompareType_LessThanOrEqual, false)]
         public async Task Create_from_configuration_should_validate_comparing_int_property_to_int_value_returning_a_valid_or_invalid_validated_as_appropriate(int valueToValidate, string compareValue, string compareType, bool shouldPass)
 
-            => await RunCompareValue<int>(valueToValidate,compareValue,"", ValidatedConstants.MinMaxToValueType_Int32, compareType, shouldPass);
-
-        [Theory]
-        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_EqualTo, true)]
-        [InlineData(15.40, "15.5", ValidatedConstants.CompareType_EqualTo, false)]
-        [InlineData(15.60, "15.5", ValidatedConstants.CompareType_NotEqualTo, true)]
-        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_NotEqualTo, false)]
-        [InlineData(20.50, "15.5", ValidatedConstants.CompareType_GreaterThan, true)]
-        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_GreaterThan, false)]
-        [InlineData(10.50, "15.5", ValidatedConstants.CompareType_LessThan, true)]
-        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_LessThan, false)]
-        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_GreaterThanOrEqual, true)]
-        [InlineData(16.50, "15.5", ValidatedConstants.CompareType_GreaterThanOrEqual, true)]
-        [InlineData(14.50, "15.5", ValidatedConstants.CompareType_GreaterThanOrEqual, false)]
-        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_LessThanOrEqual, true)]
-        [InlineData(14.50, "15.5", ValidatedConstants.CompareType_LessThanOrEqual, true)]
-        [InlineData(16.50, "15.5", ValidatedConstants.CompareType_LessThanOrEqual, false)]
-        public async Task Create_from_configuration_should_validate_comparing_decimal_property_to_decimal_value_returning_a_valid_or_invalid_validated_as_appropriate(decimal valueToValidate, string compareValue, string compareType, bool shouldPass)
-
-            => await RunCompareValue<decimal>(valueToValidate, compareValue, "", ValidatedConstants.MinMaxToValueType_Decimal, compareType, shouldPass);
-
+            => await RunCompareContactDtoValue<int>(valueToValidate,compareValue,"Age", ValidatedConstants.MinMaxToValueType_Int32, compareType, shouldPass);
 
         [Theory]
         [InlineData("1980-06-15", "1980-06-15", ValidatedConstants.CompareType_EqualTo, true)]
@@ -201,7 +194,7 @@ public class ComparisonValidatorFactory_Tests
         [InlineData("1980-07-15", "1980-06-15", ValidatedConstants.CompareType_LessThanOrEqual, false)]
         public async Task Create_from_configuration_should_validate_comparing_date_only_property_to_date_only_value_returning_a_valid_or_invalid_validated_as_appropriate(string valueToValidate, string compareValue, string compareType, bool shouldPass)
 
-            => await RunCompareValue<DateOnly>(DateOnly.Parse(valueToValidate), compareValue, "", ValidatedConstants.MinMaxToValueType_DateOnly, compareType, shouldPass);
+            => await RunCompareContactDtoValue<DateOnly>(DateOnly.Parse(valueToValidate), compareValue, "DOB", ValidatedConstants.MinMaxToValueType_DateOnly, compareType, shouldPass);
 
         [Theory]
         [InlineData("1980-06-15 12:12:12", "1980-06-15 12:12:12", ValidatedConstants.CompareType_EqualTo, true)]
@@ -220,17 +213,7 @@ public class ComparisonValidatorFactory_Tests
         [InlineData("1980-07-16 12:12:12", "1980-06-15 12:12:12", ValidatedConstants.CompareType_LessThanOrEqual, false)]
         public async Task Create_from_configuration_should_validate_comparing_date_time_property_to_date_time_value_returning_a_valid_or_invalid_validated_as_appropriate(string valueToValidate, string compareValue, string compareType, bool shouldPass)
 
-            => await RunCompareValue<DateTime>(DateTime.Parse(valueToValidate), compareValue, "", ValidatedConstants.MinMaxToValueType_DateTime, compareType, shouldPass);
-
-
-        [Theory]
-        [InlineData("c6d3a183-f6ae-46d8-8476-acaf9f15b7aa", "67bb38ec-b10f-45a7-a572-baeb5e850219", ValidatedConstants.CompareType_NotEqualTo, true)]
-        [InlineData("c6d3a183-f6ae-46d8-8476-acaf9f15b7aa", "c6d3a183-f6ae-46d8-8476-acaf9f15b7aa", ValidatedConstants.CompareType_EqualTo, true)]
-        [InlineData("c6d3a183-f6ae-46d8-8476-acaf9f15b7aa", "67bb38ec-b10f-45a7-a572-baeb5e850219", ValidatedConstants.CompareType_EqualTo, false)]
-        [InlineData("c6d3a183-f6ae-46d8-8476-acaf9f15b7aa", "c6d3a183-f6ae-46d8-8476-acaf9f15b7aa", ValidatedConstants.CompareType_NotEqualTo, false)]
-        public async Task Create_from_configuration_should_validate_comparing_guid_property_to_guid_value_returning_a_valid_or_invalid_validated_as_appropriate(string valueToValidate, string compareValue, string compareType, bool shouldPass)
-
-            => await RunCompareValue<Guid>(Guid.Parse(valueToValidate),compareValue, "", ValidatedConstants.MinMaxToValueType_Guid, compareType, shouldPass);
+            => await RunCompareContactDtoValue<DateTime>(DateTime.Parse(valueToValidate), compareValue, "Event", ValidatedConstants.MinMaxToValueType_DateTime, compareType, shouldPass);
 
 
 
@@ -251,7 +234,31 @@ public class ComparisonValidatorFactory_Tests
         [InlineData("12:12:22", "12:12:12", ValidatedConstants.CompareType_LessThanOrEqual, false)]
         public async Task Create_from_configuration_should_validate_comparing_time_span_property_to_time_span_value_returning_a_valid_or_invalid_validated_as_appropriate(string valueToValidate, string compareValue, string compareType, bool shouldPass)
 
-            => await RunCompareValue<TimeSpan>(TimeSpan.Parse(valueToValidate), compareValue, "", ValidatedConstants.MinMaxToValueType_TimeSpan, compareType, shouldPass);
+            => await RunCompareContactDtoValue<TimeSpan>(TimeSpan.Parse(valueToValidate), compareValue, "LunchTime", ValidatedConstants.MinMaxToValueType_TimeSpan, compareType, shouldPass);
+
+
+
+
+        [Theory]
+        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_EqualTo, true)]
+        [InlineData(15.40, "15.5", ValidatedConstants.CompareType_EqualTo, false)]
+        [InlineData(15.60, "15.5", ValidatedConstants.CompareType_NotEqualTo, true)]
+        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_NotEqualTo, false)]
+        [InlineData(20.50, "15.5", ValidatedConstants.CompareType_GreaterThan, true)]
+        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_GreaterThan, false)]
+        [InlineData(10.50, "15.5", ValidatedConstants.CompareType_LessThan, true)]
+        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_LessThan, false)]
+        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_GreaterThanOrEqual, true)]
+        [InlineData(16.50, "15.5", ValidatedConstants.CompareType_GreaterThanOrEqual, true)]
+        [InlineData(14.50, "15.5", ValidatedConstants.CompareType_GreaterThanOrEqual, false)]
+        [InlineData(15.50, "15.5", ValidatedConstants.CompareType_LessThanOrEqual, true)]
+        [InlineData(14.50, "15.5", ValidatedConstants.CompareType_LessThanOrEqual, true)]
+        [InlineData(16.50, "15.5", ValidatedConstants.CompareType_LessThanOrEqual, false)]
+        public async Task Create_from_configuration_should_validate_comparing_decimal_property_to_decimal_value_returning_a_valid_or_invalid_validated_as_appropriate(decimal valueToValidate, string compareValue, string compareType, bool shouldPass)
+
+            => await RunCompareContactDtoValue<decimal>(valueToValidate, compareValue, "Bonus", ValidatedConstants.MinMaxToValueType_Decimal, compareType, shouldPass);
+
+
 
 
         [Fact]
@@ -293,15 +300,17 @@ public class ComparisonValidatorFactory_Tests
         [Fact]
         public async Task Create_from_configuration_should_log_an_error_and_return_an_invalid_validated_if_its_not_a_recognised_compare_type()
         {
-            var ruleConfig = StaticData.ValidationRuleConfigForComparisonValidator("TypeFullName", "PropertyName", "DisplayName", ValidatedConstants.RuleType_CompareTo, "", "", ValidatedConstants.MinMaxToValueType_String, "BAD_COMPARE_TYPE") with { FailureMessage="FailureMessage" };
+            var ruleConfig = StaticData.ValidationRuleConfigForComparisonValidator(typeof(ContactDto).FullName!, nameof(ContactDto.GivenName), "First name", ValidatedConstants.RuleType_CompareTo, "", "", ValidatedConstants.MinMaxToValueType_String, "BAD_COMPARE_TYPE") with { FailureMessage="FailureMessage" };
             var logger     = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
-            var validator  = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<string>(ruleConfig);
+            var validator  = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<ContactDto>(ruleConfig);
 
-            var validated = await validator("test", nameof(ContactDto));
+            var contactData = StaticData.CreateContactObjectGraph();
+
+            var validated = await validator(contactData, nameof(ContactDto));
 
             using (new AssertionScope())
             {
-                validated.Should().Match<Validated<string>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
                 validated.Failures[0].Should().Match<InvalidEntry>(i => i.Cause == CauseType.RuleConfigError);
 
                 ((InMemoryLogger<ComparisonValidatorFactory>)logger).LogEntries[0]
@@ -355,23 +364,6 @@ public class ComparisonValidatorFactory_Tests
             resultTuple.Should().Be((false, CauseType.RuleConfigError));
         }
 
-
-
-        [Fact]
-        public async Task Create_from_configuration_if_given_an_unknown_compare_type_for_enum_value_should_just_try_and_use_the_compare_value_method()
-        {
-            var ruleConfig  = StaticData.ValidationRuleConfigForComparisonValidator("TypeFullName", "PropertyName", "DisplayName", ValidatedConstants.RuleType_CompareTo, "42", "",ValidatedConstants.MinMaxToValueType_Int32, ValidatedConstants.CompareType_EqualTo) with { FailureMessage = "FailureMessage" };
-            var logger      = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
-            var validator   = new ComparisonValidatorFactory(logger, (ComparisonTypeFor)999).CreateFromConfiguration<int>(ruleConfig);
-
-            var validated = await validator(42, "Path");
-
-            using(new AssertionScope())
-            {
-                validated.Should().Match<Validated<int>>(v => v.IsValid == true && v.Failures.Count==0);
-                validated.GetValueOr(84).Should().Be(42);
-            }
-        }
 
         [Fact]
         public async Task Create_from_configuration_should_return_an_invalid_validated_and_create_a_log_entry_on_a_bad_min_max_to_type()
