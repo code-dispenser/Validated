@@ -39,7 +39,7 @@ public class CacheRepository(CacheProvider cacheProvider) : ICacheRepository
                    new("Validated.ValueObject.Domain.ValueObjects.FullName", "FamilyName", "Surname", "RuleType_StringLength", "MinMaxToValueType_String", "", "Must be between 2 and 50 characters in length", 2, 50),
 
                    new("Validated.ValueObject.Domain.ValueObjects.DateRange", "StartDate", "Start date", "RuleType_VOComparison", "", "", "Must be before the end date value of: {CompareToValue} but found {ValidatedValue}", 0, 0, "", "", "", "", "CompareType_LessThan"),
-                   new("Validated.ValueObject.Domain.ValueObjects.DateRange", "EndDate", "EndDate", "RuleType_VOComparison", "MinMaxToValueType_DateOnly", "", "Must be after {CompareToValue} but found {ValidatedValue}", 0, 0, "", "", "2025-08-01", "", "CompareType_GreaterThan")
+                   new("Validated.ValueObject.Domain.ValueObjects.DateRange", "EndDate", "EndDate", "RuleType_CompareTo", "MinMaxToValueType_DateOnly", "", "Must be after {CompareToValue} but found {ValidatedValue}", 0, 0, "", "", "2025-08-01", "", "CompareType_GreaterThan")
                ));// If you want to see the exception logging, just remove the y from MinMaxToValueType_DateOnly or the the o from RuleType_CompareTo. No exceptions raised just logged and a failed validation with the cause of failure in the entry. 
 
 

@@ -36,7 +36,7 @@ namespace Validated.Core.Factories;
 /// <item>A value object against another value (<see cref="ComparisonTypeFor.ValueObject"/>)</item>
 /// </list>
 /// </param>
-internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFactory> logger, ComparisonTypeFor forType) : IValidatorFactory 
+internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFactory> logger, ComparisonTypeFor forType) : IValidatorFactory
 {
 
     /// <summary>
@@ -51,10 +51,10 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
 
         => forType switch
         {
-            ComparisonTypeFor.EntityObject  => CompareMemberValues<T>(ruleConfig),
-            ComparisonTypeFor.Value         => CompareValues<T>(ruleConfig),
-            ComparisonTypeFor.ValueObject   => CompareVOValues<T>(ruleConfig),
-            _                               => CompareValues<T>(ruleConfig),
+            ComparisonTypeFor.EntityObject => CompareMemberValues<T>(ruleConfig),
+            ComparisonTypeFor.Value => CompareValues<T>(ruleConfig),
+            ComparisonTypeFor.ValueObject => CompareVOValues<T>(ruleConfig),
+            _ => CompareValues<T>(ruleConfig),
         };
 
 
@@ -74,26 +74,26 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
 
             try
             {
-                var entityType        = typeof(T);
-                var valueProperty     = entityType.GetProperty(ruleConfig.PropertyName);
-                
+                var entityType = typeof(T);
+                var valueProperty = entityType.GetProperty(ruleConfig.PropertyName);
+
                 valueToValidate       = valueProperty!.GetValue(entity)!;
 
                 var compareToProperty = entityType.GetProperty(ruleConfig.ComparePropertyName);
-                var compareToValue    = compareToProperty!.GetValue(entity);
+                var compareToValue = compareToProperty!.GetValue(entity);
 
                 var (result, cause) = PerformComparison(valueToValidate, compareToValue, ruleConfig.CompareType, ruleConfig);
 
                 var failureMessage = result ? "" : FailureMessages.FormatCompareValueMessage(ruleConfig.FailureMessage, GeneralUtils.FromValue(valueToValidate), ruleConfig.DisplayName, GeneralUtils.FromValue(compareToValue));
 
                 var validated = result ? Validated<T>.Valid(entity)
-                                            : Validated<T>.Invalid(new InvalidEntry(failureMessage, path, ruleConfig.PropertyName, ruleConfig.DisplayName,  CauseType.Validation));
-                
+                                            : Validated<T>.Invalid(new InvalidEntry(failureMessage, path, ruleConfig.PropertyName, ruleConfig.DisplayName, CauseType.Validation));
+
                 return Task.FromResult(validated);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex,"Configuration error causing comparison failure for Tenant:{TenantId} - {TypeFullName}.{PropertyName} - ComparePropertyName:{ComparePropertyName} ValueToValidate:{ValueToValidate}",
+                logger.LogError(ex, "Configuration error causing comparison failure for Tenant:{TenantId} - {TypeFullName}.{PropertyName} - ComparePropertyName:{ComparePropertyName} ValueToValidate:{ValueToValidate}",
                     ruleConfig?.TenantID            ?? "[Null]",
                     ruleConfig?.TypeFullName        ?? "[Null]",
                     ruleConfig?.PropertyName        ?? "[Null]",
@@ -102,7 +102,7 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
                 );
 
 
-                return Task.FromResult(Validated<T>.Invalid(new InvalidEntry(ruleConfig?.FailureMessage ?? "", path, ruleConfig?.PropertyName ?? "", ruleConfig?.DisplayName ?? "",  CauseType.RuleConfigError)));
+                return Task.FromResult(Validated<T>.Invalid(new InvalidEntry(ruleConfig?.FailureMessage ?? "", path, ruleConfig?.PropertyName ?? "", ruleConfig?.DisplayName ?? "", CauseType.RuleConfigError)));
             }
         };
 
@@ -115,26 +115,19 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
     /// A <see cref="MemberValidator{T}"/> that validates the value against the configured comparison value.
     /// </returns>
     internal MemberValidator<T> CompareValues<T>(ValidationRuleConfig ruleConfig) where T : notnull
-        
-        => (entity, path,_, _) =>
-        {
-            object valueToValidate = default!;
 
+        => (valueToValidate, path, _, _) =>
+        {
             try
             {
-                var entityType    = typeof(T);
-                var valueProperty = entityType.GetProperty(ruleConfig.PropertyName);
-
-                valueToValidate  = valueProperty!.GetValue(entity)!;
-
-                var systemType   = Type.GetType($"System.{ruleConfig.MinMaxToValueType.Split("_")[1]}")!;
+                var systemType = Type.GetType($"System.{ruleConfig.MinMaxToValueType.Split("_")[1]}")!;
 
                 IComparable compareTo = systemType switch
                 {
-                    _ when systemType == typeof(DateOnly)   => (IComparable)DateOnly.Parse(ruleConfig.CompareValue),
-                    _ when systemType == typeof(DateTime)   => DateTime.Parse(ruleConfig.CompareValue),
-                    _ when systemType == typeof(Guid)       => Guid.Parse(ruleConfig.CompareValue),
-                    _ when systemType == typeof(TimeSpan)   => TimeSpan.Parse(ruleConfig.CompareValue),
+                    _ when systemType == typeof(DateOnly) => (IComparable)DateOnly.Parse(ruleConfig.CompareValue),
+                    _ when systemType == typeof(DateTime) => DateTime.Parse(ruleConfig.CompareValue),
+                    _ when systemType == typeof(Guid) => Guid.Parse(ruleConfig.CompareValue),
+                    _ when systemType == typeof(TimeSpan) => TimeSpan.Parse(ruleConfig.CompareValue),
 
                     _ => (IComparable)Convert.ChangeType(ruleConfig.CompareValue, systemType)
                 };
@@ -143,14 +136,14 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
 
                 var failureMessage = result ? "" : FailureMessages.FormatCompareValueMessage(ruleConfig.FailureMessage, GeneralUtils.FromValue(valueToValidate), ruleConfig.DisplayName, GeneralUtils.FromValue(compareTo));
 
-                var validated = result ? Validated<T>.Valid(entity)
-                                            : Validated<T>.Invalid(new InvalidEntry(failureMessage, path, ruleConfig.PropertyName, ruleConfig.DisplayName,  cause));
+                var validated = result ? Validated<T>.Valid(valueToValidate)
+                                            : Validated<T>.Invalid(new InvalidEntry(failureMessage, path, ruleConfig.PropertyName, ruleConfig.DisplayName, cause));
 
                 return Task.FromResult(validated);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex,"Configuration error causing comparison failure for Tenant:{TenantId} - {TypeFullName}.{PropertyName} - CompareValue:{CompareValue} MinMaxToValueType:{MinMaxToValueType} ValueToValidate:{ValueToValidate}",
+                logger.LogError(ex, "Configuration error causing comparison failure for Tenant:{TenantId} - {TypeFullName}.{PropertyName} - CompareValue:{CompareValue} MinMaxToValueType:{MinMaxToValueType} ValueToValidate:{ValueToValidate}",
                     ruleConfig?.TenantID          ?? "[Null]",
                     ruleConfig?.TypeFullName      ?? "[Null]",
                     ruleConfig?.PropertyName      ?? "[Null]",
@@ -182,11 +175,11 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
 
                 var (result, cause) = PerformComparison(valueToValidate, compareTo, ruleConfig.CompareType, ruleConfig);
 
-                var failureMessage = result ? "" : FailureMessages.FormatCompareValueMessage(ruleConfig.FailureMessage, GeneralUtils.FromValue(valueToValidate),ruleConfig.DisplayName, GeneralUtils.FromValue(compareTo));
+                var failureMessage = result ? "" : FailureMessages.FormatCompareValueMessage(ruleConfig.FailureMessage, GeneralUtils.FromValue(valueToValidate), ruleConfig.DisplayName, GeneralUtils.FromValue(compareTo));
 
                 var validated = result ? Validated<T>.Valid(valueToValidate)
                                             : Validated<T>.Invalid(new InvalidEntry(failureMessage, path, ruleConfig.PropertyName, ruleConfig.DisplayName, cause));
-                
+
                 return Task.FromResult(validated);
             }
             catch (Exception ex)
@@ -230,12 +223,12 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
 
             return compareType switch
             {
-                ValidatedConstants.CompareType_EqualTo              => (comparisonResult == 0, CauseType.Validation),
-                ValidatedConstants.CompareType_NotEqualTo           => (comparisonResult != 0, CauseType.Validation),
-                ValidatedConstants.CompareType_GreaterThan          => (comparisonResult > 0, CauseType.Validation),
-                ValidatedConstants.CompareType_LessThan             => (comparisonResult < 0, CauseType.Validation),
-                ValidatedConstants.CompareType_GreaterThanOrEqual   => (comparisonResult >= 0, CauseType.Validation),
-                ValidatedConstants.CompareType_LessThanOrEqual      => (comparisonResult <= 0, CauseType.Validation),
+                ValidatedConstants.CompareType_EqualTo => (comparisonResult == 0, CauseType.Validation),
+                ValidatedConstants.CompareType_NotEqualTo => (comparisonResult != 0, CauseType.Validation),
+                ValidatedConstants.CompareType_GreaterThan => (comparisonResult > 0, CauseType.Validation),
+                ValidatedConstants.CompareType_LessThan => (comparisonResult < 0, CauseType.Validation),
+                ValidatedConstants.CompareType_GreaterThanOrEqual => (comparisonResult >= 0, CauseType.Validation),
+                ValidatedConstants.CompareType_LessThanOrEqual => (comparisonResult <= 0, CauseType.Validation),
 
                 _ => LogErrorAndReturnFalse(compareType, ruleConfig)
             };
@@ -243,8 +236,8 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
 
         return compareType switch
         {
-            ValidatedConstants.CompareType_EqualTo      => (leftValue.Equals(rightValue), CauseType.Validation),
-            ValidatedConstants.CompareType_NotEqualTo   => (!leftValue.Equals(rightValue), CauseType.Validation),
+            ValidatedConstants.CompareType_EqualTo => (leftValue.Equals(rightValue), CauseType.Validation),
+            ValidatedConstants.CompareType_NotEqualTo => (!leftValue.Equals(rightValue), CauseType.Validation),
             _ => (false, CauseType.Validation) // Can't do ordering comparisons without IComparable
         };
 
@@ -258,8 +251,8 @@ internal sealed class ComparisonValidatorFactory(ILogger<ComparisonValidatorFact
                 compareType
             );
 
-            return (false,CauseType.RuleConfigError);
+            return (false, CauseType.RuleConfigError);
         }
     }
-    
+
 }
