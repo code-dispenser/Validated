@@ -36,6 +36,23 @@ public class TenantValidationBuilder_Tests
     }
 
     [Fact]
+    public async Task Tenant_validation_builder_for_member_should_add_a_validator_for_the_member_and_return_a_failed_validated_if_null()
+    {
+        var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
+
+        var builder   = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var validator = builder.ForMember(c => c.GivenName).Build();
+        var validated = await validator(null!, nameof(ContactDto));
+
+        using(new AssertionScope())
+        {
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+            validated.Failures[0].Should().Match<InvalidEntry>(i => i.Cause == CauseType.SystemError); // Uses this as it was probably not intended to be null
+        }
+      
+    }
+
+    [Fact]
     public async Task Tenant_validation_builder_for_member_should_add_a_validator_for_the_member()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
@@ -51,6 +68,8 @@ public class TenantValidationBuilder_Tests
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
+
+
 
     [Fact]
     public async Task Tenant_validation_builder_for_nullable_member_should_add_a_validator_for_the_member()
