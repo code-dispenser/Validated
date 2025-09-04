@@ -382,7 +382,7 @@ public class TenantValidationBuilder_Tests
 
         ImmutableList<ValidationRuleConfig> ruleConfigs =
             [
-                new(typeof(Node).FullName!, nameof(Node.Name),nameof(Node.Name), ValidatedConstants.RuleType_StringLength,"","","Should be between 3 and 10 characters in length",6,10)
+                new(typeof(Node).FullName!, nameof(Node.Name),nameof(Node.Name), ValidatedConstants.RuleType_StringLength,"","","Should be between 6 and 10 characters in length",6,10)
             ];
 
         var builder     = CreateTenantBuilder<Node>(ruleConfigs);
