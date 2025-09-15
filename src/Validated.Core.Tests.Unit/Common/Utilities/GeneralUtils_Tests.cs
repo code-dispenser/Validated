@@ -119,16 +119,18 @@ public class GeneralUtils_Tests
                 new object[] { new DateTime(2022, 6, 15), "2022-06-15T00:00:00" },
                 new object[] { new DateOnly(2023, 12, 25), "2023-12-25" },
                 new object[] { new TimeSpan(1, 30, 0), "01:30:00" },
-                new object[] { null, "" },
                 new object[] { "already-a-string", "already-a-string" },
                 new object[] { new object(), "System.Object" }
             ];
 
     [Theory]
     [MemberData(nameof(FromValueTestData))]
-    public void From_value_should_return_an_empty_string_if_the_value_is_null(object? valueToConvert, string expectedStringValue)
+    public void From_value_should_convert_the_value_to_the_appropriate_string_value(object? valueToConvert, string expectedStringValue)
         
         => GeneralUtils.FromValue(valueToConvert).Should().Be(expectedStringValue);
-    
-    
+
+    [Fact]
+    public void From_value_should_return_an_empty_string_if_the_value_is_null()
+
+        => GeneralUtils.FromValue(null!).Should().Be("");
 }
