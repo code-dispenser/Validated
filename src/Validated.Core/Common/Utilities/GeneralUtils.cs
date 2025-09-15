@@ -97,7 +97,7 @@ namespace Validated.Core.Common.Utilities
                 DateTime dt => dt.ToString("yyyy-MM-ddTHH:mm:ss"),
                 DateOnly d => d.ToString("O"),
                 TimeSpan t => t.ToString(),
-                _ => String.Empty,
+                _ => valueToValidate.ToString()!,
 
             };
 

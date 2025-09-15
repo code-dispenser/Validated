@@ -228,13 +228,11 @@ A Console Demo project is included within the solution containing the project fo
 Just uncomment the section you want to run in `Program.cs`.
 
 ## 8. Roadmap
-Full documentation (working on).
 
-Advanced scenario solutions to be placed in the /examples folder showing:
+Currently working on:
 
-- Multi-tenant configuration-driven validators (TenantValidationBuilder)
-- Validating domain value objects without polluting your domain model (Done).
-- Advanced collection and recursive scenarios (Done).
-- Creating a custom multi-tenant / dynamic config based validator (Done).
+- A separate NuGet package for a Blazor validation component that integrates with the EditForm/EditContext (Validated.Blazor)
+
+
 
 
