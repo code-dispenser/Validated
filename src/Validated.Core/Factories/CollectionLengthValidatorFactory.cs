@@ -61,6 +61,8 @@ internal sealed class CollectionLengthValidatorFactory(ILogger<CollectionLengthV
 
                  var valid = count >= ruleConfig.MinLength && count <= ruleConfig.MaxLength && count > -1;
 
+                 if (count == -1) count = 0;//-1 in user messages makes no sense.
+
                  var failureMessage = valid ? "" : FailureMessages.FormatCollectionLengthMessage(ruleConfig.FailureMessage, ruleConfig.DisplayName, count.ToString());
 
                  var result = valid ? Validated<T>.Valid(valueToValidate!)

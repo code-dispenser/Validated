@@ -44,6 +44,28 @@ public class CollectionLengthValidatorFactory_Tests
     }
 
     [Fact]
+    public async Task Create_from_configuration_should_return_an_invalid_validated_if_it_fails_the_length_check_due_to_null()
+    {
+        var contact     = StaticData.CreateContactObjectGraph();
+        var ruleConfig  = StaticData.ValidationRuleConfigForCollectionLengthValidator(typeof(ContactDto).FullName!, nameof(ContactDto.ContactMethods), nameof(ContactDto.ContactMethods), 3, 10);
+        var logger      = new InMemoryLoggerFactory().CreateLogger<CollectionLengthValidatorFactory>();
+        var validator   = new CollectionLengthValidatorFactory(logger).CreateFromConfiguration<List<ContactMethodDto>>(ruleConfig);
+
+
+        contact.ContactMethods = null!;
+
+        var validated = await validator(contact.ContactMethods, nameof(ContactDto));
+
+        using (new AssertionScope())
+        {
+            validated.Should().Match<Validated<List<ContactMethodDto>>>(v => v.IsValid == false && v.Failures.Count == 1);
+            validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == nameof(ContactDto) && i.PropertyName == nameof(ContactDto.ContactMethods)
+                                                           && i.FailureMessage == "Must have at least 3 item(s) but no more than 10 items");
+        }
+    }
+
+
+    [Fact]
     public async Task Create_from_configuration_should_return_an_invalid_validated_and_log_an_error_if_the_type_is_not_a_collection_or_is_a_string()
     {
         var contact     = StaticData.CreateContactObjectGraph();
