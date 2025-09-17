@@ -16,17 +16,16 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/code-dispenser/Validated</RepositoryUrl>
     <PackageTags>validation;validator;data-validation;functional;functional-programming;fluent;csharp;.net;domain-driven-design;multi-tenant</PackageTags>
-	<Version>1.0.5</Version>
-    <AssemblyVersion>1.0.5</AssemblyVersion>
-    <FileVersion>1.0.5</FileVersion>
-	<InformationalVersion>1.0.5</InformationalVersion>
+	<Version>1.0.6</Version>
+    <AssemblyVersion>1.0.6</AssemblyVersion>
+    <FileVersion>1.0.6</FileVersion>
+	<InformationalVersion>1.0.6</InformationalVersion>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	<Deterministic>true</Deterministic>
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-	<PackageReleaseNotes>Fixed issue in the Comparison failure message replacements for ValidatedValue 
-that in some cases used String.Empty instead of ToString.</PackageReleaseNotes>
+	<PackageReleaseNotes>Fixed an issue where -1 was included in a failure message replacement instead of zero for when a non nullable collection was null.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
