@@ -17,11 +17,11 @@ public static class Without_The_Builder
             * You would most likely put the following in a class/static class dependent on your needs 
             * Lets create a small validator to validate some of the ContactDto members
             * 
-            * These use the next building block EntityValidator<T> delegate with a signature that returns a Task<Validated<T>> but they just consume/extend the MemberValidator we are used to.
+            * These use the next building block EntityValidator<T> delegate with a signature that returns a Task<Validated<T>> but they just consume/extend the MemberValidator that we have been using.
         */
 
 
-        EntityValidator<ContactDto> familyNameValidator  = GeneralFieldValidators.FamilyNameValidator().ForEntityMember<ContactDto, string>(c => c.FamilyName);// << we just use the extensions methods to se the property name for the path
+        EntityValidator<ContactDto> familyNameValidator  = GeneralFieldValidators.FamilyNameValidator().ForEntityMember<ContactDto, string>(c => c.FamilyName);// << we just use the extensions methods to set the property name for the path
         /*
             * or the other way round 
         */ 

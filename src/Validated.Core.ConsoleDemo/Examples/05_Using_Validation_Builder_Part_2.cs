@@ -9,17 +9,17 @@ namespace Validated.Core.ConsoleDemo.Examples;
 public static class Using_Validation_Builder_Part_2
 {
     /*
-        * To save typing I have placed some general field validator in the Common\SharedValidators - GeneralFieldValidators static class 
+        * To save typing I have placed some general field validators in the Common\SharedValidators - GeneralFieldValidators static class 
     */ 
     public static async Task Run()
     {
         /*
-            * What if we have a nested complex object. The contact object has an Address property that has holds a AddressDTO type.
+            * What if we have a nested complex object. The contact object has an Address property that has holds an AddressDTO type.
             * If a property is complex and nullable (optional i.e Address?) then use the Nullable version of the builder methods. 
             * This is important. If the complex type is nullable and missing then it passes validation otherwise it is checked with the respective validator.
-            * If its non-nullable but is null and you have assigned a validator it will fail validation as it was'nt classed as an optional member.
+            * If its non-nullable but the value is null, and a validator has been assigned it will fail validation as it was'nt classed as an optional member.
         
-            * Simple types also have Nullable method.
+            * Simple types also have Nullable methods.
             * 
             * For nested objects its simpler just to use another builder and use its returned validator - everything is composable.
             * 
@@ -29,7 +29,7 @@ public static class Using_Validation_Builder_Part_2
 
         var contact = StaticData.CreateContactObjectGraph();
 
-        contact.NullableAddress  = null;//this now will just pass do the same for address and it will fail
+        contact.NullableAddress  = null;//this now will just pass, do the same for address and it will fail
         contact.NullableAge      = 65;
 
         var addressValidator = ValidationBuilder<AddressDto>.Create()
@@ -57,7 +57,7 @@ public static class Using_Validation_Builder_Part_2
 
         /*
             * Remember everything is re-usable and composable
-            * YWe can validate just the address part of the contact using the addressValidator directly
+            * We can validate just the address part of the contact using the addressValidator directly
             * Or just the Family name using the FamilyNameValidator etc
         */
 

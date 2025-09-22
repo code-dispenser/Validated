@@ -47,7 +47,7 @@ public static class MemberValidator_Building_Block
         * and supplied failureMessage via closure captures built into it.
         * 
         * I like to put these factory functions in a project that's shared so you can use them in any part of your application. 
-        * You can also create static/non static wrapper classes that have methods to call these factory functions with these classes providing the failures messages.
+        * You can also create static/non static wrapper classes that have methods to call these factory functions, with these classes providing the failures messages.
         * The choice is yours on how you compose things.
       */
     public static MemberValidator<string> CreateHelloWorldValidator(string failureMessage)
@@ -55,7 +55,7 @@ public static class MemberValidator_Building_Block
         => (valueToValidate, path, _, _) => // the delegate needs a value, but we can discard optional params if not needed (path, compareTo, cancellationToken)  
         {
             /*
-                * The delegate MemberValidator returns a Task<Validated<T>> so as we have no async stuff in here to await we just use Task.FromResult 
+                * The delegate MemberValidator returns a Task<Validated<T>> so as we have no real async work in here to await we just use Task.FromResult 
             */ 
             return (valueToValidate == "World") ? Task.FromResult(Validated<string>.Valid(valueToValidate)) 
                                                     : Task.FromResult(Validated<string>.Invalid(new InvalidEntry(failureMessage,path)));

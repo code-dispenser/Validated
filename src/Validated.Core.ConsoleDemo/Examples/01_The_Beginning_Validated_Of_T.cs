@@ -5,7 +5,7 @@ namespace Validated.Core.ConsoleDemo.Examples;
 public static class The_Beginning_Validated_Of_T
 {
     /*
-        * Every validator returns a Validated<T> that is either Valid or Invalid. If valid it will contain the validated value, if invalid it will contain a list of one or more failures - List<InvalidEntry>
+        * Every validator returns a Validated<T> that is either Valid or Invalid. If valid it will contain the validated value, if invalid it will contain a list of one or more failures - IReadOnlyList<InvalidEntry>
         * 
         * Validated<T> is a type structure (container) used for many purposes in this instance is the return type of every validator/validation.
         * The T in Validated could be a simple primitive or a complete object graph.
