@@ -216,7 +216,7 @@ var validated = await contactValidator(contact)
 For multi-tenant applications or scenarios where validation rules need to be dynamic, the library provides the `TenantValidationBuilder<TEntity>`.
 
 Instead of providing validator instances directly, this builder creates them at runtime from a list of `ValidationRuleConfig` objects. This configuration data can be loaded from a database, a JSON file, or any other source, and can be cached and periodically refreshed. 
-It supports tenant- and culture-specific rule resolution. But just like the rest of the library everything is comprised of the `MemberValidator<T>` delegate, so just functions all the way until your `Validated<T>` return (all without reflection or source generators).  
+It supports tenant- and culture-specific rule resolution. But just like the rest of the library everything is comprised of the `MemberValidator<T>` delegate, so just functions all the way until your `Validated<T>` returns.  
 
 More detailed standalone solutions showing more advanced usage of the library will be placed in the main examples folder in the repo as they are completed.
 
