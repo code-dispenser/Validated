@@ -54,14 +54,16 @@ The core building block is MemberValidator&lt;T&gt;, which is simply a delegate 
 
     public static MemberValidator<string> CreateHelloWorldValidator(string failureMessage)
 
-        => (valueToValidate, path, _, _) => // the delegate needs a value, but we can discard optional params if not needed (path, compareTo, cancellationToken)  
-        {
+        => (valueToValidate, path, _, _) => // the delegate needs a value, but we can discard optional
+        {                                   // params if not needed (path, compareTo, cancellationToken)  
             /*
-                * The delegate MemberValidator returns a Task<Validated<T>> so as we have no async stuff in here to await we just use Task.FromResult 
+                * The delegate MemberValidator returns a Task<Validated<T>> so as we have no async stuff
+                * in here to await we just use Task.FromResult 
             */ 
-            return (valueToValidate == "World") ? Task.FromResult(Validated<string>.Valid(valueToValidate)) 
-                                                    : Task.FromResult(Validated<string>.Invalid(new InvalidEntry(failureMessage,path)));
-                                                      //path is good to add as its populated when validating entities
+            return (valueToValidate == "World")
+                    ? Task.FromResult(Validated<string>.Valid(valueToValidate)) 
+                    : Task.FromResult(Validated<string>.Invalid(new InvalidEntry(failureMessage,path)));
+                                          //path is good to add as its populated when validating entities
         };   
 ```
 
@@ -144,9 +146,9 @@ Now a ValidationBuilder can reuse the appropriate validator for any matching fie
 ```csharp
 var contactValidator = ValidationBuilder<ContactDto>.Create()
                         .ForMember(c => c.Title, GeneralFieldValidators.TitleValidator())
-                            .ForMember(c => c.GivenName, GeneralFieldValidators.GivenNameValidator())
-                                .ForMember(c => c.FamilyName, GeneralFieldValidators.FamilyNameValidator())
-                                    .Build();
+                        .ForMember(c => c.GivenName, GeneralFieldValidators.GivenNameValidator())
+                        .ForMember(c => c.FamilyName, GeneralFieldValidators.FamilyNameValidator())
+                        .Build();
 
 var validated = await contactValidator(contact)
 ```
@@ -164,20 +166,20 @@ The builder makes it easy to handle complex object graphs.
 ```csharp
 // First, create a validator for the nested AddressDto
 var addressValidator = ValidationBuilder<AddressDto>.Create()
-                        .ForMember(a => a.AddressLine, GeneralFieldValidators.AddressLineValidator())
-                            .ForMember(a => a.TownCity, GeneralFieldValidators.TownCityValidator())
-                                .ForMember(a => a.County, GeneralFieldValidators.CountyValidator())
-                                    .ForNullableStringMember(a => a.Postcode, GeneralFieldValidators.UKPostcodeValidator()) // Nullable primitive
-                                        .Build();
+                       .ForMember(a => a.AddressLine, GeneralFieldValidators.AddressLineValidator())
+                       .ForMember(a => a.TownCity, GeneralFieldValidators.TownCityValidator())
+                       .ForMember(a => a.County, GeneralFieldValidators.CountyValidator())
+                       .ForNullableStringMember(a => a.Postcode, GeneralFieldValidators.UKPostcodeValidator()) // Nullable primitive
+                       .Build();
 
 // Now, use it in the parent ContactDto validator
 var contactValidator = ValidationBuilder<ContactDto>.Create()
                         .ForMember(c => c.GivenName, GeneralFieldValidators.GivenNameValidator())
-                            .ForMember(c => c.FamilyName, GeneralFieldValidators.FamilyNameValidator())
-                                .ForNullableMember(c => c.NullableAge, GeneralFieldValidators.NullableAgeValidator()) // Nullable value type
-                                 .ForNestedMember(c => c.Address, addressValidator) // Required nested object
-                                    .ForNullableNestedMember(c => c.NullableAddress, addressValidator) // Optional nested object
-                                        .Build();
+                        .ForMember(c => c.FamilyName, GeneralFieldValidators.FamilyNameValidator())
+                        .ForNullableMember(c => c.NullableAge, GeneralFieldValidators.NullableAgeValidator()) // Nullable value type
+                        .ForNestedMember(c => c.Address, addressValidator) // Required nested object
+                        .ForNullableNestedMember(c => c.NullableAddress, addressValidator) // Optional nested object
+                        .Build();
 
 var validated = await contactValidator(contact)
 ```
@@ -196,18 +198,18 @@ The builder has specific methods for validating collections:
 ```csharp
 // Validator for items in the ContactMethods collection
 var contactMethodValidator = ValidationBuilder<ContactMethodDto>.Create()
-                                .ForMember(c => c.MethodType, GeneralFieldValidators.MethodTypeValidator())
-                                    .ForMember(c => c.MethodValue, GeneralFieldValidators.MethodValueValidator())
-                                        .Build();
+                             .ForMember(c => c.MethodType, GeneralFieldValidators.MethodTypeValidator())
+                             .ForMember(c => c.MethodValue, GeneralFieldValidators.MethodValueValidator())
+                             .Build();
 
 var contactValidator = ValidationBuilder<ContactDto>.Create()
                         // Validate each string in the 'Entries' list
                         .ForEachPrimitiveItem(c => c.Entries, GeneralFieldValidators.EntryValidator())
-                            // Validate the 'Entries' list itself (e.g., must have 1-3 items)
-                            .ForCollection(c => c.Entries, GeneralFieldValidators.EntryCountValidator())
-                                // Validate each complex object in the 'ContactMethods' list
-                                .ForEachCollectionMember(c => c.ContactMethods, contactMethodValidator)
-                                    .Build();
+                        // Validate the 'Entries' list itself (e.g., must have 1-3 items)
+                        .ForCollection(c => c.Entries, GeneralFieldValidators.EntryCountValidator())
+                        // Validate each complex object in the 'ContactMethods' list
+                        .ForEachCollectionMember(c => c.ContactMethods, contactMethodValidator)
+                        .Build();
 
 var validated = await contactValidator(contact)
 ```
