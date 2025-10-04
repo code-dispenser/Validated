@@ -229,9 +229,7 @@ Just uncomment the section you want to run in `Program.cs`.
 
 ## 8. Roadmap
 
-Currently working on:
-
-- A separate NuGet package for a Blazor validation component that integrates with the EditForm/EditContext (Validated.Blazor)
+- A separate NuGet package for a Blazor validation component that integrates with the EditForm/EditContext - **Done** and published: Validated.Blazor
 
 
 
