@@ -1,5 +1,7 @@
 [![.NET](https://github.com/code-dispenser/Validated/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/code-dispenser/Validated/actions/workflows/dotnet.yml) 
 [![Coverage Status](https://coveralls.io/repos/github/code-dispenser/Validated/badge.svg?branch=main)](https://coveralls.io/github/code-dispenser/Validated?branch=main)
+![NuGet Downloads](https://img.shields.io/nuget/dt/Validated.Core)
+
 <h1>
 <img src="https://raw.githubusercontent.com/code-dispenser/Validated/main/assets/logo-64.png" align="center" alt="Validated icon" /> Validated
 </h1>
@@ -48,7 +50,7 @@ private static Validated<string> Hello(string input)
                 : Validated<string>.Invalid(new InvalidEntry("Expected 'World' to be entered"));
 ```
 
-## 3. MemberValidator&lt;T&gt; deletage (the building block for all validators)
+## 3. MemberValidator&lt;T&gt; delegate (the building block for all validators)
 The core building block is MemberValidator&lt;T&gt;, which is simply a delegate (function) that takes a value (also has optional paramaters, more on those later) and returns a Validated<T>. You can implement your own validators by writing any function that matches this signature:
 ```csharp
 
