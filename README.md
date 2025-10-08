@@ -1,6 +1,9 @@
 [![.NET](https://github.com/code-dispenser/Validated/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/code-dispenser/Validated/actions/workflows/dotnet.yml) 
 [![Coverage Status](https://coveralls.io/repos/github/code-dispenser/Validated/badge.svg?branch=main)](https://coveralls.io/github/code-dispenser/Validated?branch=main)
-![NuGet Downloads](https://img.shields.io/nuget/dt/Validated.Core)
+[![Nuget download][download-image]][download-url]
+
+[download-image]: https://img.shields.io/nuget/dt/Validated.Core
+[download-url]: https://www.nuget.org/packages/Validated.Core
 
 <h1>
 <img src="https://raw.githubusercontent.com/code-dispenser/Validated/main/assets/logo-64.png" align="center" alt="Validated icon" /> Validated
