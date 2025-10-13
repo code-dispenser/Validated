@@ -188,7 +188,7 @@ public class ValidatorExtensions_Tests
     public class ForNestedEntityMember
     {
         [Fact]
-        public async Task For_entity_member_should_return_an_invalid_validated_if_the_entity_is_null()
+        public async Task For_nested_entity_member_should_return_an_invalid_validated_if_the_entity_is_null()
         {
             var nestedValidator = StubbedValidators.CreatePassingEntityValidator<AddressDto>();
             var entityValidator = ValidatorExtensions.ForNestedEntityMember<ContactDto, AddressDto>(c => c.Address!, nestedValidator);
@@ -255,7 +255,7 @@ public class ValidatorExtensions_Tests
     public class ForNullableNestedEntityMember
     {
         [Fact]
-        public async Task For_entity_member_should_return_an_invalid_validated_if_the_entity_is_null()
+        public async Task For_nullable_nested_entity_member_should_return_an_invalid_validated_if_the_entity_is_null()
         {
             var nestedValidator = StubbedValidators.CreatePassingEntityValidator<AddressDto>();
             var entityValidator = ValidatorExtensions.ForNullableNestedEntityMember<ContactDto, AddressDto>(c => c.Address, nestedValidator);
@@ -485,7 +485,7 @@ public class ValidatorExtensions_Tests
     public class ForEachPrimitiveItem
     {
         [Fact]
-        public async Task For_entity_member_should_return_an_invalid_validated_if_the_entity_is_null()
+        public async Task For_each_primitive_item_member_should_return_an_invalid_validated_if_the_entity_is_null()
         {
             var itemValidator = StubbedValidators.CreatePassingMemberValidator<string>();
             var entityValidator = ValidatorExtensions.ForEachPrimitiveItem<ContactDto, string>(c => c.Entries, itemValidator);
@@ -556,7 +556,7 @@ public class ValidatorExtensions_Tests
     public class ForCollection
     {
         [Fact]
-        public async Task For_entity_member_should_return_an_invalid_validated_if_the_entity_is_null()
+        public async Task For_collection_member_should_return_an_invalid_validated_if_the_entity_is_null()
         {
             var itemValidator = StubbedValidators.CreatePassingMemberValidator<List<ContactMethodDto>>();
             var entityValidator = ValidatorExtensions.ForCollection<ContactDto, List<ContactMethodDto>>(c => c.ContactMethods, itemValidator);
