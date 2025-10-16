@@ -12,6 +12,8 @@ internal static class ErrorMessages
 
     public const string Validator_Max_Depth_Exceeded_User_Message   = "Maximum validation depth exceeded";
 
+    public const string Validator_Member_Null_Value_User_Message    = "System validation error, the value cannot be null. If this persists please contact support.";
+
     public const string Validator_Entity_Null_User_Message          = "System validation error, entity cannot be null. If this persists please contact support.";
 
     public const string Validator_Bad_Expression_Message            = "Failed to compile or analyse the selector expression";

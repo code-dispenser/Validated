@@ -81,4 +81,71 @@ public class ValidationBuilder_Tests
         var validated = await validator(nodeChain, "", new(new ValidationOptions { MaxRecursionDepth = 10 }));//5 + 1 max depth message
     }
 
+
+    [Theory]
+    [InlineData("Paul")]
+    [InlineData("John")]
+    public async Task Do_when_should_add_a_predicate_to_each_validator_until_cleared_with_end_when(string givenName)
+    {
+        var contact   = StaticData.CreateContactObjectGraph();
+
+        var validator = ValidationBuilder<ContactDto>.Create()
+                            .DoWhen(c => c.GivenName == "Paul")
+                                .ForMember(c => c.Title, MemberValidators.CreateStringRegexValidator("^(Mr|Mrs|Ms|Dr|Prof)$", "Title", "Title", "Must be one of Mr, Mrs, Ms, Dr, Prof"))
+                                .ForMember(c => c.Age, MemberValidators.CreateRangeValidator(10, 50, "Age", "Age", "Must be between 10 and 50"))    
+                            .Build();
+
+        contact.GivenName = givenName;
+        contact.Title     = "D";
+        contact.Age       = 55;
+
+        var validated = await validator(contact, nameof(ContactDto));
+
+        if (givenName == "Paul")//Passes condition so runs validation
+        {
+            using(new AssertionScope())
+            {
+                validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 2);
+
+                validated.Failures[1].Should().Match<InvalidEntry>(i => i.FailureMessage == "Must be between 10 and 50");
+                
+                return;
+            }
+        }
+
+        validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
+       
+    }
+
+    [Fact]
+    public async Task End_when_should_close_the_block()
+    {
+        var contact = StaticData.CreateContactObjectGraph();
+
+        var validator = ValidationBuilder<ContactDto>.Create()
+                            .DoWhen(c => c.GivenName == "Paul")
+                                .ForMember(c => c.Title, MemberValidators.CreateStringRegexValidator("^(Mr|Mrs|Ms|Dr|Prof)$", "Title", "Title", "Must be one of Mr, Mrs, Ms, Dr, Prof"))
+                            .EndWhen()
+                                .ForMember(c => c.Age, MemberValidators.CreateRangeValidator(10, 50, "Age", "Age", "Must be between 10 and 50"))
+                            .Build();
+
+        contact.GivenName = "John"; //Causes condition to be skipped, closed before the Age validation so that runs.
+        contact.Title     = "D";
+        contact.Age       = 55;
+
+        var validated = await validator(contact, nameof(ContactDto));
+
+        using (new AssertionScope())
+        {
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+
+            validated.Failures[0].Should().Match<InvalidEntry>(i => i.FailureMessage == "Must be between 10 and 50");
+
+            return;
+        }
+
+    }
+
+
+
 }

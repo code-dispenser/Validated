@@ -381,14 +381,12 @@ public class TenantValidationBuilder<TEntity> where TEntity : notnull
         return AddValidatorIfNotExists(memberName, ValidatorExtensions.ForRecursiveEntity(selectorExpression, baseValidator));
     }
 
-    /// <summary>
-    /// Builds and returns the composite entity validator from all configured validation rules.
-    /// </summary>
-    /// <returns>
-    /// An <see cref="EntityValidator{TEntity}"/> that combines all validators created from
-    /// rule configurations. If no validators were configured, returns a validator that
-    /// considers all entities valid.
-    /// </returns>
+    /// <param name="failFastOnNull">
+    /// When set to true, the returned validator immediately fails with an invalid result
+    /// if the entity being validated is null.
+    /// When set to false (the default), the validator behaves normally, allowing individual
+    /// validators to determine how null entities are handled.
+    /// </param>
     /// <remarks>
     /// <para>
     /// The returned validator executes all configured validators and combines their results.
@@ -396,15 +394,26 @@ public class TenantValidationBuilder<TEntity> where TEntity : notnull
     /// are aggregated and returned together.
     /// </para>
     /// <para>
-    /// This method should be called once all desired validation rules have been configured
-    /// through the builder's fluent methods.
+    /// When <paramref name="failFastOnNull"/> is set to true, the validator performs an early check
+    /// for null entities before executing any validation logic. This ensures that validation halts
+    /// immediately and returns a system error indicating that the entity cannot be null.
+    /// This behavior is useful in scenarios where null entities represent an unrecoverable state.
     /// </para>
     /// </remarks>
-    public EntityValidator<TEntity> Build()
+    public EntityValidator<TEntity> Build(bool failFastOnNull = false)
     {
-        if (_validators.Count == 0) return ValidatedExtensions.Combine<TEntity>((input, _, context,_) => Task.FromResult(Validated<TEntity>.Valid(input)));
+        if (_validators.Count == 0) return ValidatedExtensions.Combine<TEntity>((input, _, context, _) => Task.FromResult(Validated<TEntity>.Valid(input)));
 
-       return ValidatedExtensions.Combine(_validators.ToArray());
+        var combinedValidator = ValidatedExtensions.Combine(_validators.ToArray());
+
+        if (false == failFastOnNull) return combinedValidator;
+
+        return async (entity, path, context, cancellationToken) =>
+        {
+            if (entity is null) return Validated<TEntity>.Invalid(new InvalidEntry(ErrorMessages.Validator_Entity_Null_User_Message, typeof(TEntity).Name, typeof(TEntity).Name, typeof(TEntity).Name, CauseType.SystemError));
+
+            return await combinedValidator(entity, path, context, cancellationToken);
+        };
     }
 
     /// <summary>

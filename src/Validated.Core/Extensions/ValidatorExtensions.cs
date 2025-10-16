@@ -27,6 +27,41 @@ public static class ValidatorExtensions
         => string.IsNullOrWhiteSpace(path) ? typeof(TEntity).Name : path;
 
     /// <summary>
+    /// Applies the specified entity validator conditionally, executing it only when the provided predicate evaluates to <see langword="true"/>.
+    /// </summary>
+    /// <typeparam name="TEntity">
+    /// The type of the entity being validated. Must be a non-null reference type.
+    /// </typeparam>
+    /// <param name="validator">
+    /// The entity validator to execute when the predicate condition is met.
+    /// </param>
+    /// <param name="predicate">
+    /// A function that determines whether validation should be executed for the given entity.
+    /// If the predicate returns <see langword="false"/>, validation is skipped and the entity is treated as valid.
+    /// </param>
+    /// <returns>
+    /// An <see cref="EntityValidator{TEntity}"/> that conditionally executes the specified validator 
+    /// based on the predicate evaluation.
+    /// </returns>
+    /// <remarks>
+    /// This extension enables conditional validation logic at the entity level, allowing certain 
+    /// validation rules to be applied only under specific circumstances. If the entity is null,
+    /// an invalid result containing a system error is returned.
+    /// </remarks>
+    public static EntityValidator<TEntity> When<TEntity>(this EntityValidator<TEntity> validator, Func<TEntity, bool> predicate) where TEntity : notnull
+    
+        => async (entity, path, context, cancellationToken) =>
+        {
+            if (entity is null) return Validated<TEntity>.Invalid(new InvalidEntry(ErrorMessages.Validator_Entity_Null_User_Message, typeof(TEntity).Name, "Unknown", "Unknown", CauseType.SystemError));
+
+            if (false == predicate(entity)) return Validated<TEntity>.Valid(entity!);
+
+            return await validator(entity, path, context, cancellationToken).ConfigureAwait(false);
+        };
+    
+
+
+    /// <summary>
     /// Creates an entity validator that validates a specific member of an entity using the provided member validator.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity containing the member.</typeparam>

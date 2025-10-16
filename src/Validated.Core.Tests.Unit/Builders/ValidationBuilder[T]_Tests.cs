@@ -1,5 +1,7 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using Validated.Core.Builders;
+using Validated.Core.Common.Constants;
 using Validated.Core.Tests.SharedDataFixtures.Common.Data;
 using Validated.Core.Tests.SharedDataFixtures.Common.Models;
 using Validated.Core.Tests.SharedDataFixtures.Common.Validators;
@@ -145,5 +147,71 @@ public class ValidationBuilder_Tests
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
 
- 
+    [Fact]
+    public async Task Build_called_with_fail_fast_on_null_set_to_true_should_return_an_invalid_validated_with_a_single_failure()
+    {
+        var listValidator   = StubbedValidators.CreatePassingMemberValidator<List<string>>();
+        var memberValidator = StubbedValidators.CreateFailingMemberValidator<string>("GivenName", "First name", "Should not see this message");
+
+        var entityValidator = ValidationBuilder<ContactDto>.Create()
+                                .ForMember(c => c.GivenName, memberValidator)
+                                .ForCollection(c => c.Entries, listValidator)
+                                .Build(failFastOnNull: true);
+        
+        var validated = await entityValidator(null!);
+
+        using(new AssertionScope())
+        {
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+
+            validated.Failures[0].Should().Match<InvalidEntry>(i => i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message && i.Cause == CauseType.SystemError);
+        }
+    }
+  
+    [Fact]
+    public async Task Build_called_with_fail_fast_on_null_set_to_false_should_continue_causing_multiple_null_failures()
+    {
+        var listValidator   = StubbedValidators.CreateFailingMemberValidator<List<string>>(nameof(ContactDto.Entries), nameof(ContactDto.Entries), "Entries should contain items");
+        var memberValidator = StubbedValidators.CreateFailingMemberValidator<string>(nameof(ContactDto.GivenName), "First name", "Should start with a capital");
+
+        var entityValidator = ValidationBuilder<ContactDto>.Create()
+                                .ForMember(c => c.GivenName, memberValidator)
+                                .ForCollection(c => c.Entries, listValidator)
+                                .Build(failFastOnNull: false);
+
+        var validated = await entityValidator(null!);
+
+        using (new AssertionScope())
+        {
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 2);
+
+            validated.Failures[0].Should().Match<InvalidEntry>(i => i.PropertyName == nameof(ContactDto.GivenName) && i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message && i.Cause == CauseType.SystemError);
+            validated.Failures[1].Should().Match<InvalidEntry>(i => i.PropertyName == nameof(ContactDto.Entries) && i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message && i.Cause == CauseType.SystemError);
+        }
+
+    }
+
+    [Fact]
+    public async Task Build_called_with_fail_fast_on_null_set_to_true_run_as_normal_if_the_entity_is_not_null()
+    {
+        var contact         = StaticData.CreateContactObjectGraph();
+        var listValidator   = StubbedValidators.CreateFailingMemberValidator<List<string>>(nameof(ContactDto.Entries), nameof(ContactDto.Entries), "Entries should contain items");
+        var memberValidator = StubbedValidators.CreateFailingMemberValidator<string>(nameof(ContactDto.GivenName), "First name", "Should start with a capital");
+
+        var entityValidator = ValidationBuilder<ContactDto>.Create()
+                                .ForMember(c => c.GivenName, memberValidator)
+                                .ForCollection(c => c.Entries, listValidator)
+                                .Build(failFastOnNull: true);
+
+        var validated = await entityValidator(contact);
+
+        using (new AssertionScope())
+        {
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 2);
+
+            validated.Failures[0].Should().Match<InvalidEntry>(i => i.PropertyName == nameof(ContactDto.GivenName) && i.FailureMessage == "Should start with a capital" && i.Cause == CauseType.Validation);
+            validated.Failures[1].Should().Match<InvalidEntry>(i => i.PropertyName == nameof(ContactDto.Entries) && i.FailureMessage == "Entries should contain items" && i.Cause == CauseType.Validation);
+
+        }
+    }
 }

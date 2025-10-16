@@ -18,4 +18,16 @@ public static class StubbedValidators
     public static EntityValidator<TEntity> CreateFailingEntityValidator<TEntity>(string propertyName, string displayName, string failureMessage) where TEntity : notnull
 
         => (entity, path, context, _) => Task.FromResult(Validated<TEntity>.Invalid(new InvalidEntry(failureMessage,path, propertyName, displayName)));
+
+
+    public static EntityValidator<TEntity> CreateSimpleEntityValidator<TEntity>(int use_42_To_Pass, string propertyName, string displayName, string failureMessage) where TEntity : notnull
+
+        => (entity, path, context, _) =>
+        {
+            var result = use_42_To_Pass == 42 ? Validated<TEntity>.Valid(entity)
+                                                : Validated<TEntity>.Invalid(new InvalidEntry(failureMessage, path, propertyName, displayName));
+
+            return Task.FromResult(result);
+        };
+    
 }

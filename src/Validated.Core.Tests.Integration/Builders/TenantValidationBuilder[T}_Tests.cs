@@ -2,6 +2,7 @@
 using FluentAssertions.Execution;
 using System.Collections;
 using System.Collections.Immutable;
+using System.Diagnostics.Contracts;
 using Validated.Core.Builders;
 using Validated.Core.Common.Constants;
 using Validated.Core.Factories;
@@ -56,7 +57,7 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_member_should_add_a_validator_for_the_member()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
+        var contact     = StaticData.CreateContactObjectGraph();
 
         var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
         /*
@@ -75,7 +76,7 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_nullable_member_should_add_a_validator_for_the_member()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
+        var contact     = StaticData.CreateContactObjectGraph();
 
         var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
@@ -89,7 +90,7 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_nullable_member_should_add_a_validator_for_the_member_amd_pass_validation_if_null()//nullable means optional
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
+        var contact     = StaticData.CreateContactObjectGraph();
 
         var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
@@ -106,7 +107,7 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_nullable_string_member_should_be_able_to_add_a_validator_for_the_nullable_string_member()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
+        var contact     = StaticData.CreateContactObjectGraph();
 
         var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
         /*
@@ -128,8 +129,8 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_nullable_string_member_should_be_able_to_add_a_validator_for_the_nullable_string_member_amd_pass_validation_if_null()//nullable means optional
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         contact.Mobile = null;
 
@@ -144,8 +145,8 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_nested_member_should_be_able_to_add_a_validator_for_the_nested_entity()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         var addressValidator = CreateTenantBuilder<AddressDto>(ruleConfigs)
                                     .ForMember(a => a.AddressLine)
@@ -175,8 +176,8 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_nullable_nested_member_should_be_able_to_add_a_validator_for_the_nested_entity()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         var addressValidator = CreateTenantBuilder<AddressDto>(ruleConfigs)
                                     .ForMember(a => a.AddressLine)
@@ -204,8 +205,8 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_nullable_nested_member_should_be_able_to_add_a_validator_for_the_nested_entity_but_pass_if_nullable_is_null()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         var addressValidator = CreateTenantBuilder<AddressDto>(ruleConfigs)
                                     .ForMember(a => a.AddressLine)
@@ -229,8 +230,8 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_comparison_with_member_should_add_a_validator_to_compare_members()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilderDOBCompare();//set to compare CompareDOB with equal to comparison
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         contact.DOB         = new DateOnly(1980, 6, 15);
         contact.CompareDOB  = new DateOnly(1980, 6, 15);
@@ -245,8 +246,8 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_comparison_with_value_should_add_a_validator_to_compare_with_the_config_value()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilderCompareTo();//set to compare age (greater or equal to) 18 in config
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         contact.Age = 18;
 
@@ -262,8 +263,8 @@ public class TenantValidationBuilder_Tests
     public async Task Tenant_validation_builder_for_each_collection_member_should_add_a_validator_for_the_collection_entity_item()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
 
         var methodValidator = CreateTenantBuilder<ContactMethodDto>(ruleConfigs)
@@ -282,9 +283,9 @@ public class TenantValidationBuilder_Tests
     [Fact]
     public async Task Tenant_validation_builder_for_each_collection_primitive_should_add_a_validator_for_the_collection_primitives()
     {
-        var contact = StaticData.CreateContactObjectGraph();
+        var contact     = StaticData.CreateContactObjectGraph();
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         contact.Entries = ["StringOne", "StringToLong"];
 
@@ -304,9 +305,9 @@ public class TenantValidationBuilder_Tests
     [Fact]
     public async Task Tenant_validation_builder_for_collection_should_add_a_validator_for_the_collection_level()
     {
-        var contact = StaticData.CreateContactObjectGraph();
+        var contact     = StaticData.CreateContactObjectGraph();
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         contact.Entries = ["StringOne", "StringTwoLong"];//rule say between 1 and 5
 
@@ -320,9 +321,9 @@ public class TenantValidationBuilder_Tests
     [Fact]
     public async Task Tenant_validation_builder_for_collection_should_not_conflict_with_collection_Primitive_methods()
     {
-        var contact = StaticData.CreateContactObjectGraph();
+        var contact     = StaticData.CreateContactObjectGraph();
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         contact.Entries = ["StringOne", "StringTwo", "3", "4", "5", "BadIndexForCollectionAndBadStringLength"];//length rule for primitive is  between 1 and 10 chars, collection is between between 1 to 5
 
@@ -350,8 +351,8 @@ public class TenantValidationBuilder_Tests
     public async Task Build_called_with_no_added_validators_should_return_a_valid_validated()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();//set to compare CompareDOB with equal to comparison
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         var validator = builder.Build();
         var validated = await validator(contact, nameof(ContactDto));
@@ -363,8 +364,8 @@ public class TenantValidationBuilder_Tests
     public async Task Only_one_validator_per_member_should_be_added_to_the_builder_duplicated_should_be_ignored()
     {
         var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();//set to compare CompareDOB with equal to comparison
-        var contact = StaticData.CreateContactObjectGraph();
-        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+        var contact     = StaticData.CreateContactObjectGraph();
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         contact.GivenName = "J";
 
@@ -400,6 +401,67 @@ public class TenantValidationBuilder_Tests
     }
 
 
+    [Fact]
+    public async Task Build_called_with_fail_fast_on_null_set_to_true_should_return_an_invalid_validated_with_a_single_failure()
+    {
+        var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();//set to compare CompareDOB with equal to comparison
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
+
+        var entityValidator = builder.ForMember(c => c.Title)
+                                        .ForMember(c => c.GivenName)
+                                            .Build(true);
+
+        var validated = await entityValidator(null!);
+
+        using (new AssertionScope())
+        {
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+
+            validated.Failures[0].Should().Match<InvalidEntry>(i => i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message && i.Cause == CauseType.SystemError);
+        }
+
+    }
+    [Fact]
+    public async Task Build_called_with_fail_fast_on_null_set_to_false_should_continue_causing_multiple_null_failures()
+    {
+        var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();//set to compare CompareDOB with equal to comparison
+        var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
+
+        var entityValidator = builder.ForMember(c => c.Title)
+                                        .ForMember(c => c.GivenName)
+                                            .Build(false);
+
+        var validated = await entityValidator(null!);
+
+ 
+
+        using (new AssertionScope())
+        {
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 2);
+
+            validated.Failures[0].Should().Match<InvalidEntry>(i => i.PropertyName == nameof(ContactDto.Title) && i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message && i.Cause == CauseType.SystemError);
+            validated.Failures[1].Should().Match<InvalidEntry>(i => i.PropertyName == nameof(ContactDto.GivenName) && i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message && i.Cause == CauseType.SystemError);
+
+        }
+
+    }
+    [Fact]
+    public async Task Build_called_with_fail_fast_on_null_set_to_true_should_run_as_normal_if_the_entity_is_not_null()
+    {
+        var contact     = StaticData.CreateContactObjectGraph();
+        var ruleConfigs = StaticData.ValidationRuleConfigsForTenantValidationBuilder();//set to compare CompareDOB with equal to comparison
+
+        var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
+
+        var entityValidator = builder.ForMember(c => c.Title)
+                                        .ForMember(c => c.GivenName)
+                                            .Build(true);
+
+        var validated = await entityValidator(contact);
+
+        validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
+
+    }
 
 
 }

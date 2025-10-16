@@ -350,4 +350,26 @@ public class ValidatedExtensions_Tests
         }
     }
 
+    public class HasNullEntityFailure
+    {
+        [Fact]
+        public void Should_return_true_if_any_failure_message_is_null_entity_failure_message()
+        {
+            List<InvalidEntry> invalidEntries = [new InvalidEntry("Some Message"), new InvalidEntry(ErrorMessages.Validator_Entity_Null_User_Message)];
+            
+            var validated = Validated<ContactDto>.Invalid(invalidEntries);
+
+            validated.HasNullEntityFailure().Should().BeTrue(); 
+        }
+
+        [Fact]
+        public void Should_return_false_if_there_are_no_entity_failure_message()
+        {
+            List<InvalidEntry> invalidEntries = [new InvalidEntry("Some failure"), new InvalidEntry("Another failure")];
+
+            var validated = Validated<ContactDto>.Invalid(invalidEntries);
+
+            validated.HasNullEntityFailure().Should().BeFalse();
+        }
+    }
 }

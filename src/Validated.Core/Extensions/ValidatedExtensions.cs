@@ -1,4 +1,5 @@
-﻿using Validated.Core.Types;
+﻿using Validated.Core.Common.Constants;
+using Validated.Core.Types;
 
 namespace Validated.Core.Extensions;
 
@@ -239,5 +240,29 @@ public static class ValidatedExtensions
                                             : Validated<TOut>.Invalid(validationEntries);
     }
 
+    /// <summary>
+    /// Determines whether the validated result contains a failure indicating that the entity being validated was null.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of the entity that was validated. Must be a non-null reference type.
+    /// </typeparam>
+    /// <param name="validated">
+    /// The validated result to inspect for null entity failures.
+    /// </param>
+    /// <returns>
+    /// True if the validated result includes a failure whose message equals
+    /// <c>ErrorMessages.Validator_Entity_Null_User_Message</c>; otherwise, false.
+    /// </returns>
+    /// <remarks>
+    /// <para>
+    /// This method provides a convenient way to detect whether a validation failure was specifically
+    /// caused by a null entity rather than other validation rule violations.
+    /// It inspects all failure entries in the <see cref="Validated{T}"/> instance and returns true
+    /// if any match the system-defined null entity error message.
+    /// </para>
+    /// </remarks>
+    public static bool HasNullEntityFailure<T>(this Validated<T> validated) where T : notnull
+
+        => validated.Failures.Any(i => i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message);
 }
 

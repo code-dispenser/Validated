@@ -665,4 +665,57 @@ public class ValidatorExtensions_Tests
         }
     }
 
+
+    public class When
+    {
+
+        [Theory]
+        [InlineData("Paul")]
+        [InlineData("John")]
+
+        public async Task When_should_execute_the_validator_when_the_predicate_is_true(string givenName)
+        {
+            var contact                = StaticData.CreateContactObjectGraph();
+            var failingEntityValidator = StubbedValidators.CreateSimpleEntityValidator<ContactDto>(41, nameof(ContactDto.Age), nameof(ContactDto.Age), "Should be 42");
+
+            contact.GivenName = "Paul";
+
+            var validator = failingEntityValidator.When(c => c.GivenName == givenName);
+            var validated = await validator(contact, nameof(ContactDto));
+
+            if (givenName == "Paul")// passes when to execute failing validator
+            {
+                using (new AssertionScope())
+                {
+                    validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+                    validated.Failures[0].Should().Match<InvalidEntry>(i => i.FailureMessage == "Should be 42" && i.PropertyName == nameof(ContactDto.Age));
+                    return;
+
+                }
+            }
+
+            validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);//fails when so validation is skipped
+
+        }
+
+        [Fact]
+        public async Task When_should_execute_return_a_failing_validated_if_the_entity_is_null()
+        {
+            var contact                = StaticData.CreateContactObjectGraph();
+            var failingEntityValidator = StubbedValidators.CreateSimpleEntityValidator<ContactDto>(41, nameof(ContactDto.Age), nameof(ContactDto.Age), "Should be 42");
+
+            var validator = failingEntityValidator.When(c => c.GivenName == "Paul");
+            var validated = await validator(null!, nameof(ContactDto));
+
+                using (new AssertionScope())
+                {
+                    validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
+                    validated.Failures[0].Should().Match<InvalidEntry>(i => i.FailureMessage == ErrorMessages.Validator_Entity_Null_User_Message && i.PropertyName == "Unknown"
+                                                                    && i.Cause == CauseType.SystemError);
+                    return;
+
+                }
+
+        }
+    }
 }

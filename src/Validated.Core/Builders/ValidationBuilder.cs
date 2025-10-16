@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Linq.Expressions;
+using Validated.Core.Common.Constants;
 using Validated.Core.Extensions;
 using Validated.Core.Types;
 
@@ -30,6 +31,8 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
 {
     private readonly List<EntityValidator<TEntity>> _validators   = [];
 
+    private Func<TEntity, bool>? _currentPredicate;
+
     /// <summary>
     /// Initializes a new instance of the ValidationBuilder with an empty validator collection.
     /// </summary>
@@ -55,11 +58,81 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
     /// </remarks>
     private ValidationBuilder<TEntity> AddValidator(EntityValidator<TEntity> validator)
     {
-        _validators.Add(validator);
+        var finalValidator = validator;
+
+        if(_currentPredicate is not null) finalValidator = validator.When(_currentPredicate);
+
+        _validators.Add(finalValidator);
 
         return this;
     }
 
+    /// <summary>
+    /// Begins a conditional validation scope that applies subsequent validation rules 
+    /// only when the specified predicate evaluates to <see langword="true"/> for the entity.
+    /// </summary>
+    /// <param name="predicate">
+    /// A function that determines whether the subsequent validation rules should be applied
+    /// for the given entity instance. If the predicate returns <see langword="false"/>, the rules
+    /// defined after this call (until <see cref="EndWhen"/>) are skipped.
+    /// </param>
+    /// <returns>
+    /// The current <see cref="ValidationBuilder{TEntity}"/> instance to enable fluent method chaining.
+    /// </returns>
+    /// <remarks>
+    /// <para>
+    /// This method enables conditional validation by allowing one or more validation rules 
+    /// to be applied only when a specified condition holds true. It sets an internal predicate 
+    /// that gates all following validation configurations until <see cref="EndWhen"/> is called.
+    /// </para>
+    /// <para>
+    /// Example usage:
+    /// <code>
+    /// builder.DoWhen(c => c.IsActive)
+    ///        .ForMember(c => c.Email, Validators.Required())
+    ///        .EndWhen();
+    /// </code>
+    /// In this example, the <c>Email</c> property is validated only when the entity’s <c>IsActive</c>
+    /// flag is set to true.
+    /// </para>
+    /// </remarks>
+    public ValidationBuilder<TEntity> DoWhen(Func<TEntity, bool> predicate)
+    {
+        _currentPredicate = predicate;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Ends a previously started conditional validation scope, returning validation behavior 
+    /// to unconditional mode.
+    /// </summary>
+    /// <returns>
+    /// The current <see cref="ValidationBuilder{TEntity}"/> instance to enable fluent method chaining.
+    /// </returns>
+    /// <remarks>
+    /// <para>
+    /// This method clears the predicate set by a preceding call to <see cref="DoWhen"/>,
+    /// ensuring that subsequent validation rules are always applied regardless of entity state.
+    /// </para>
+    /// <para>
+    /// It is typically used to close a conditional validation block, restoring normal validation flow:
+    /// </para>
+    /// <code>
+    /// builder.DoWhen(c => c.HasChildren)
+    ///        .ForEachCollectionMember(c => c.Children, childValidator)
+    ///        .EndWhen()
+    ///        .ForMember(c => c.Name, Validators.Required());
+    /// </code>
+    /// In this example, child validation occurs only when <c>HasChildren</c> is true,
+    /// while the <c>Name</c> validation always runs.
+    /// </remarks>
+    public ValidationBuilder<TEntity> EndWhen()
+    {
+        _currentPredicate = null;
+
+        return this;
+    }
 
     /// <summary>
     /// Configures validation for a non-nullable property using the provided member validator.
@@ -308,13 +381,12 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
 
          => AddValidator(ValidatorExtensions.ForRecursiveEntity(selectorExpression, baseValidator));
 
-    /// <summary>
-    /// Builds and returns the composite entity validator from all configured validation rules.
-    /// </summary>
-    /// <returns>
-    /// An <see cref="EntityValidator{TEntity}"/> that combines all validators added to the builder.
-    /// If no validators were added, returns a validator that considers all entities valid.
-    /// </returns>
+    /// <param name="failFastOnNull">
+    /// When set to true, the returned validator immediately fails with an invalid result
+    /// if the entity being validated is null.
+    /// When set to false (the default), the validator behaves normally, allowing individual
+    /// validators to determine how null entities are handled.
+    /// </param>
     /// <remarks>
     /// <para>
     /// The returned validator executes all configured validators and combines their results.
@@ -322,15 +394,26 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
     /// are aggregated and returned together.
     /// </para>
     /// <para>
-    /// This method should be called once all desired validation rules have been configured
-    /// through the builder's fluent methods.
+    /// When <paramref name="failFastOnNull"/> is set to true, the validator performs an early check
+    /// for null entities before executing any validation logic. This ensures that validation halts
+    /// immediately and returns a system error indicating that the entity cannot be null.
+    /// This behavior is useful in scenarios where null entities represent an unrecoverable state.
     /// </para>
     /// </remarks>
-    public EntityValidator<TEntity> Build()
+    public EntityValidator<TEntity> Build(bool failFastOnNull = false)
     {
         if (_validators.Count == 0) return ValidatedExtensions.Combine<TEntity>((input, _, context, _) => Task.FromResult(Validated<TEntity>.Valid(input)));
 
-       return ValidatedExtensions.Combine(_validators.ToArray());
+        var combinedValidator = ValidatedExtensions.Combine(_validators.ToArray());
+
+        if (false == failFastOnNull) return combinedValidator;
+
+        return async (entity, path, context, cancellationToken) =>
+        {
+            if (entity is null) return Validated<TEntity>.Invalid(new InvalidEntry(ErrorMessages.Validator_Entity_Null_User_Message, typeof(TEntity).Name, typeof(TEntity).Name, typeof(TEntity).Name, CauseType.SystemError));
+
+            return await combinedValidator(entity, path, context, cancellationToken);
+        };
 
     }
 
