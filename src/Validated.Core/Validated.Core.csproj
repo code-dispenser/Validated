@@ -16,16 +16,22 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/code-dispenser/Validated</RepositoryUrl>
     <PackageTags>validation;validator;data-validation;functional;functional-programming;fluent;csharp;.net;domain-driven-design;multi-tenant</PackageTags>
-	<Version>1.0.6</Version>
-    <AssemblyVersion>1.0.6</AssemblyVersion>
-    <FileVersion>1.0.6</FileVersion>
-	<InformationalVersion>1.0.6</InformationalVersion>
+	<Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
+	<InformationalVersion>1.1.0</InformationalVersion>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	<Deterministic>true</Deterministic>
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-	<PackageReleaseNotes>Fixed an issue where -1 was included in a failure message replacement instead of zero for when a non nullable collection was null.</PackageReleaseNotes>
+	<PackageReleaseNotes>Added a boolean parameter 'failFastOnNull' to the Build method on both the ValidationBuilder and TenantValidationBuider which is set to false by default. Its purpose when set to true is to return a single InvalidEntry with a failure message stating that the entity used is null, stopping all validations otherwise multiple failure messages accrue.
+
+Added an extension method HasNullEntityFailure on Validated&lt;T&gt; that checks if there are failures and returns true if there is a null entity failure message.
+
+Added support for conditional validation on the ValidationBuilder by adding the Methods DoWhen and EndWhen. All validators after the DoWhen are included in the conditional until an EndWhen closes the group.
+
+Added the extension method on EntityValidator&lt;TEntity&gt; to provide the conditional predicate needed for DoWhen.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
