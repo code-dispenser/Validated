@@ -11,6 +11,10 @@ public static class GeneralFieldValidators
 {
     /*
         * Lots of objects may share the same field names/data types and validation requirements. 
+        * 
+        * I am showing Methods without params, you can have params and pass them along,Alternatively
+        * you can create static properties and then set the property from within the static constructor which is how I normal
+        * do things.
     */
 
     public static MemberValidator<string> TitleValidator()

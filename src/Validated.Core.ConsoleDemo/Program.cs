@@ -31,6 +31,8 @@ internal class Program
 
         await Using_Validation_Builder_Part_4.Run();
 
+        await Using_Validation_Builder_Part_5.Run();
+
         await Without_The_Builder.Run();
 
         Console.ReadLine();
