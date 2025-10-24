@@ -121,7 +121,7 @@ public class ValidationBuilder_Tests
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
         [Fact]
-        public async Task Should_throw_invalidate_operation_exception_if_scopes_are_not_closed()
+        public void Should_throw_invalidate_operation_exception_if_scopes_are_not_closed()
         {
             var givenName = "Paul";
             var contact = StaticData.CreateContactObjectGraph();
