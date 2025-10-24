@@ -17,23 +17,23 @@ internal class Program
     */ 
     static async Task Main()
     {
-        //await The_Beginning_Validated_Of_T.Run();
+        await The_Beginning_Validated_Of_T.Run();
 
-        //await MemberValidator_Building_Block.Run();
+        await MemberValidator_Building_Block.Run();
 
-        //await Built_In_MemberValidators.Run();
+        await Built_In_MemberValidators.Run();
 
-        //await Using_Validation_Builder_Part_1.Run();
+        await Using_Validation_Builder_Part_1.Run();
 
-        //await Using_Validation_Builder_Part_2.Run();
+        await Using_Validation_Builder_Part_2.Run();
 
-        //await Using_Validation_Builder_Part_3.Run();
+        await Using_Validation_Builder_Part_3.Run();
 
-        //await Using_Validation_Builder_Part_4.Run();
+        await Using_Validation_Builder_Part_4.Run();
 
         await Using_Validation_Builder_Part_5.Run();
 
-        //await Without_The_Builder.Run();
+        await Without_The_Builder.Run();
 
         Console.ReadLine();
     }

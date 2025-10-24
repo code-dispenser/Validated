@@ -54,7 +54,7 @@ private static Validated<string> Hello(string input)
 ```
 
 ## 3. MemberValidator&lt;T&gt; delegate (the building block for all validators)
-The core building block is MemberValidator&lt;T&gt;, which is simply a delegate (function) that takes a value (also has optional paramaters, more on those later) and returns a Validated<T>. You can implement your own validators by writing any function that matches this signature:
+The core building block is MemberValidator&lt;T&gt;, which is simply a delegate (function) that takes a value (also has optional parameters, more on those later) and returns a Validated<T>. You can implement your own validators by writing any function that matches this signature:
 ```csharp
 
     public static MemberValidator<string> CreateHelloWorldValidator(string failureMessage)
