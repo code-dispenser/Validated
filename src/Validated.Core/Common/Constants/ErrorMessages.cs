@@ -21,7 +21,9 @@ internal static class ErrorMessages
     public const string Validator_Nesting_Unsupported_Message       = "Deeply nested member access is not supported in {0}. The expression {1} reaches through multiple objects. " +
                                                                        "Please use 'ForNestedMember' to validate the nested property with a dedicated validator for the nested type.";
 
-    public const string Validator_Factory_Not_Found                 = "The validator factory for the rule type of: {ruleType} was not found. Using the failing validator to fail the validation";            
+    public const string Validator_Factory_Not_Found                 = "The validator factory for the rule type of: {ruleType} was not found. Using the failing validator to fail the validation";
+
+    public const string Validation_Builder_Unbalenced_DoWhen        = "The DoWhen method(s) are not closed, missing {0} EndWhen(S). Please add the missing EndWhen(s)";
 
     public const string Default_Failure_Message = "Validation failure";
 }

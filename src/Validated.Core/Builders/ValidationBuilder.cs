@@ -31,8 +31,8 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
 {
     private readonly List<EntityValidator<TEntity>> _validators   = [];
 
-    private Func<TEntity, bool>? _currentPredicate;
-
+    private Stack<Func<TEntity, bool>> _predicateStack = [];
+    private Func<TEntity, bool>?        _cachedCombinedPredicate;
     /// <summary>
     /// Initializes a new instance of the ValidationBuilder with an empty validator collection.
     /// </summary>
@@ -60,13 +60,23 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
     {
         var finalValidator = validator;
 
-        if(_currentPredicate is not null) finalValidator = validator.When(_currentPredicate);
+        if (_predicateStack.Count > 0 && _cachedCombinedPredicate is not null) finalValidator = validator.When(_cachedCombinedPredicate);
 
         _validators.Add(finalValidator);
 
         return this;
     }
+    private void UpdateCachedPredicate()
+    {
+        if (_predicateStack.Count == 0)
+        {
+            _cachedCombinedPredicate = null;
+            return;
+        }
 
+        var predicates = _predicateStack.Reverse().ToList();
+        _cachedCombinedPredicate = entity => predicates.All(p => p(entity));
+    }
     /// <summary>
     /// Begins a conditional validation scope that applies subsequent validation rules 
     /// only when the specified predicate evaluates to <see langword="true"/> for the entity.
@@ -98,8 +108,8 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
     /// </remarks>
     public ValidationBuilder<TEntity> DoWhen(Func<TEntity, bool> predicate)
     {
-        _currentPredicate = predicate;
-
+        _predicateStack.Push(predicate);
+        UpdateCachedPredicate();
         return this;
     }
 
@@ -129,8 +139,12 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
     /// </remarks>
     public ValidationBuilder<TEntity> EndWhen()
     {
-        _currentPredicate = null;
-
+        if (_predicateStack.Count > 0)
+        {  
+            _predicateStack.Pop();
+            UpdateCachedPredicate();
+        }
+           
         return this;
     }
 
@@ -387,6 +401,11 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
     /// When set to false (the default), the validator behaves normally, allowing individual
     /// validators to determine how null entities are handled.
     /// </param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when there are unbalanced DoWhen/EndWhen calls. Each DoWhen() must have a 
+    /// corresponding EndWhen() before calling Build(). The exception message indicates 
+    /// how many DoWhen() calls remain unclosed.
+    /// </exception>
     /// <remarks>
     /// <para>
     /// The returned validator executes all configured validators and combines their results.
@@ -399,10 +418,17 @@ public class ValidationBuilder<TEntity> where TEntity : notnull
     /// immediately and returns a system error indicating that the entity cannot be null.
     /// This behavior is useful in scenarios where null entities represent an unrecoverable state.
     /// </para>
+    /// <para>
+    /// Build() validates that all conditional scopes opened with DoWhen() have been properly 
+    /// closed with EndWhen(). This validation prevents malformed builder configurations that 
+    /// would result in incorrect validation behavior at runtime.
+    /// </para>
     /// </remarks>
     public EntityValidator<TEntity> Build(bool failFastOnNull = false)
     {
         if (_validators.Count == 0) return ValidatedExtensions.Combine<TEntity>((input, _, context, _) => Task.FromResult(Validated<TEntity>.Valid(input)));
+
+        if (_predicateStack.Count > 0) throw new InvalidOperationException(String.Format(ErrorMessages.Validation_Builder_Unbalenced_DoWhen, _predicateStack.Count));
 
         var combinedValidator = ValidatedExtensions.Combine(_validators.ToArray());
 
