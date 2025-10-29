@@ -69,14 +69,11 @@ public static partial class MemberValidators
 
             if (true == typeof(T).IsValueType) return Task.FromResult(Validated<T>.Valid(valueToValidate!));
 
-            if (valueToValidate is null) 
-                    return Task.FromResult(Validated<T>.Invalid(new InvalidEntry(FailureMessages.Format(failureMessage, "", displayName),BuildPathFromParams(path, propertyName), propertyName, displayName)));
+            if (valueToValidate is null) return CreateInvalidWithDefaultFormatting<T>("",path, propertyName,displayName,failureMessage);
 
-            if (valueToValidate is string stringValue && String.IsNullOrWhiteSpace(stringValue.Trim())) 
-                    return Task.FromResult(Validated<T>.Invalid(new InvalidEntry(FailureMessages.Format(failureMessage, "", displayName),BuildPathFromParams(path, propertyName), propertyName, displayName)));
+            if (valueToValidate is string stringValue && String.IsNullOrWhiteSpace(stringValue.Trim())) return CreateInvalidWithDefaultFormatting<T>("", path, propertyName, displayName, failureMessage);
 
-            if (valueToValidate is not string && valueToValidate is IEnumerable enumerable && !enumerable.Cast<object>().Any()) 
-                    return Task.FromResult(Validated<T>.Invalid(new InvalidEntry(FailureMessages.Format(failureMessage, "", displayName),BuildPathFromParams(path, propertyName), propertyName, displayName))); 
+            if (valueToValidate is not string && valueToValidate is IEnumerable enumerable && !enumerable.Cast<object>().Any()) return CreateInvalidWithDefaultFormatting<T>("", path, propertyName, displayName, failureMessage);
 
             return Task.FromResult(Validated<T>.Valid(valueToValidate!));
 
@@ -95,13 +92,11 @@ public static partial class MemberValidators
 
         => (valueToValidate, path, _, _) =>
         {
+            if (valueToValidate is null) return CreateInvalidWithDefaultFormatting<T>("", path, propertyName, displayName, failureMessage);
 
-            if (valueToValidate is null) return Task.FromResult(Validated<T>.Invalid(new InvalidEntry(FailureMessages.Format(failureMessage, "", displayName), BuildPathFromParams(path, propertyName), propertyName, displayName)));
+            if (false == predicate(valueToValidate)) return CreateInvalidWithDefaultFormatting<T>(valueToValidate.ToString()!, path, propertyName, displayName, failureMessage);
 
-            var result = predicate(valueToValidate) ? Validated<T>.Valid(valueToValidate)
-                                                        : Validated<T>.Invalid(new InvalidEntry(FailureMessages.Format(failureMessage, valueToValidate.ToString()!, displayName),BuildPathFromParams(path, propertyName), propertyName, displayName));
-
-            return Task.FromResult(result);
+            return Task.FromResult(Validated<T>.Valid(valueToValidate));
         };
 
     /// <summary>
@@ -118,15 +113,17 @@ public static partial class MemberValidators
        
         => (valueToValidate, path, _, _) =>
         {
-            if (valueToValidate is null) 
-                    return Task.FromResult(Validated<T>.Invalid(new InvalidEntry(FailureMessages.Format(failureMessage, "", displayName), BuildPathFromParams(path, propertyName), propertyName, displayName)));
+            if (valueToValidate is null) return CreateInvalidWithDefaultFormatting<T>("", path, propertyName, displayName, failureMessage);
 
-            var result = (valueToValidate.CompareTo(minValue) >= 0 && valueToValidate.CompareTo(maxValue) <= 0) 
-                                            ? Validated<T>.Valid(valueToValidate)
-                                                : Validated<T>.Invalid(new InvalidEntry(FailureMessages.Format(failureMessage, valueToValidate.ToString()!, displayName), BuildPathFromParams(path, propertyName), propertyName, displayName));
-
-            return Task.FromResult(result);
+            if (valueToValidate.CompareTo(minValue) >= 0 && valueToValidate.CompareTo(maxValue) <= 0) return Task.FromResult(Validated<T>.Valid(valueToValidate));
+            
+            return CreateInvalidWithDefaultFormatting<T>(valueToValidate.ToString()!, path, propertyName, displayName, failureMessage);
         };
 
+    /// <summary>
+    /// Internal helper method that creates a Task of an invalid validated with default failure message replacement formatting
+    /// </summary>
+    internal static Task<Validated<T>> CreateInvalidWithDefaultFormatting<T>(string valueToValidate, string path, string propertyName, string displayName, string failureMessage) where T : notnull
 
+        => Task.FromResult(Validated<T>.Invalid(new InvalidEntry(FailureMessages.Format(failureMessage, valueToValidate, displayName), BuildPathFromParams(path, propertyName), propertyName, displayName)));
 }

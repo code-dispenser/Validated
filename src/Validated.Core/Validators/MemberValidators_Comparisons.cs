@@ -23,11 +23,6 @@ public static partial class MemberValidators
           {
               try
               {
-                  //var result = PerformComparison(valueToValidate, compareTo, comparisonType)
-                  //                  ? Validated<T>.Valid(valueToValidate)
-                  //                      : Validated<T>.Invalid(new InvalidEntry(FailureMessages.FormatCompareValueMessage(failureMessage, valueToValidate.ToString()!, displayName, compareTo.ToString()!), BuildPathFromParams(path, propertyName), propertyName, displayName));
-
-
                   var isValid = PerformComparison(valueToValidate, compareTo, comparisonType);
                   
                   var (leftValue, rightValue) = ("", "");

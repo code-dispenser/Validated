@@ -82,3 +82,33 @@ public enum CauseType
     /// </summary>
     SystemError
 }
+
+/// <summary>
+///  Allowable url bit flag schemes for the URL validator.
+/// </summary>
+[Flags]
+public enum UrlSchemeTypes : int
+{
+    /// <summary>
+    /// no scheme.
+    /// </summary>
+    None = 0,
+    /// <summary>
+    /// allows the http scheme.
+    /// </summary>
+    Http = 1,
+    /// <summary>
+    /// allows the https scheme.
+    /// </summary>
+    Https = 2,
+    /// <summary>
+    /// allows the ftp scheme.
+    /// </summary>
+    Ftp = 4,
+    /// <summary>
+    /// allows the ftps scheme.
+    /// </summary>
+    Ftps = 8
+
+    
+}
