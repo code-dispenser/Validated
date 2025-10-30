@@ -523,7 +523,7 @@ public class MemberValidators_Tests
         [InlineData("badUrl", UrlSchemeTypes.Http)]
         public async Task Should_return_an_invalid_validated_when_value_is_null_or_url_try_parse_fails(string? valueEoValidate, UrlSchemeTypes allowableSchemes)
         {
-            var validator = MemberValidators.CreateUrlValidator(allowableSchemes, "Url", "Url", "Invalid format");
+            var validator = MemberValidators.CreateUrlValidator<string>(allowableSchemes, "Url", "Url", "Invalid format");
 
             var validated = await validator(valueEoValidate!, "Path");
 
@@ -540,7 +540,7 @@ public class MemberValidators_Tests
         [InlineData("ppp://www.google.com", UrlSchemeTypes.Http)]
         public async Task Should_return_an_invalid_validated_when_the_url_scheme_is_not_allowed_or_allowable_scheme_is_none_or_the_host_is_empty(string? valueEoValidate, UrlSchemeTypes allowableSchemes)
         {
-            var validator = MemberValidators.CreateUrlValidator(allowableSchemes, "Url", "Url", "Invalid format");
+            var validator = MemberValidators.CreateUrlValidator<string>(allowableSchemes, "Url", "Url", "Invalid format");
 
             var validated = await validator(valueEoValidate!, "Path");
 
@@ -555,7 +555,7 @@ public class MemberValidators_Tests
         [InlineData("http://www.google.com", UrlSchemeTypes.Ftps | UrlSchemeTypes.Http, false)]
         public async Task Should_return_an_invalid_validated_if_the_scheme_is_not_one_of_the_allowed_types(string valueToValidate, UrlSchemeTypes allowableSchemes, bool shouldFail)
         {
-            var validator = MemberValidators.CreateUrlValidator(allowableSchemes, "Url", "Url", "Invalid format");
+            var validator = MemberValidators.CreateUrlValidator<string>(allowableSchemes, "Url", "Url", "Invalid format");
 
             var validated = await validator(valueToValidate, "Path");
 
@@ -570,6 +570,29 @@ public class MemberValidators_Tests
             }
 
             validated.GetValueOr("").Should().Be(valueToValidate);
+        }
+
+        public static IEnumerable<object[]> UriData
+
+            =>
+                [
+                    new object[] { null!, UrlSchemeTypes.Https | UrlSchemeTypes.Ftps},
+                    new object[] { new Uri("http://www.google.com"), UrlSchemeTypes.Https | UrlSchemeTypes.Ftps},
+                ];
+
+        [Theory]
+        [MemberData(nameof(UriData))]
+        public async Task Should_return_an_invalid_validated_when_uri_value_is_null_or_the_scheme_is_not_allowed(Uri? valueEoValidate, UrlSchemeTypes allowableSchemes)
+        {
+            var validator = MemberValidators.CreateUrlValidator<Uri>(allowableSchemes, "Url", "Url", "Invalid format");
+
+            var validated = await validator(valueEoValidate!, "Path");
+
+            using (new AssertionScope())
+            {
+                validated.Should().Match<Validated<Uri>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == "Path" && i.PropertyName == "Url" && i.DisplayName == "Url" && i.FailureMessage == "Invalid format");
+            }
         }
     }
 }

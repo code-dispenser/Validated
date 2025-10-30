@@ -12,6 +12,8 @@ public record class ContactDto
     public int?     NullableAge { get; set; }
     public int      Age         { get; set; }
 
+    public string StringUrl { get; set; } = default!;
+    public Uri Url { get; set; } = default!;
 
     public List<string> Entries { get; set; } = [];
 

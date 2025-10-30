@@ -74,6 +74,11 @@ public static class ValidatedConstants
     public const string RuleType_VOComparison = "RuleType_VOComparison";
 
     /// <summary>
+    /// Rule type for Url format validation - used in config based validations.
+    /// </summary>
+    public const string RuleType_UrlFormat = "RuleType_UrlFormat";
+
+    /// <summary>
     /// Comparison type for equality check - used in config based validations.
     /// </summary>
     public const string CompareType_EqualTo = "CompareType_EqualTo";
@@ -178,6 +183,27 @@ public static class ValidatedConstants
     /// The target type for a collection of items where the validation is about the collection itself such as the count of item and not the content - used in config based validations.
     /// </summary>
     public const string TargetType_Collection = "TargetType_Collection";
+
+    /// <summary>
+    /// Scheme type for all allowable schemes - used in config based validations.
+    /// </summary>
+    public const string SchemeTypes_All = "Https|Http|Ftps|Ftp";
+    /// <summary>
+    /// Scheme type for Https - used in config based validations.
+    /// </summary>
+    public const string SchemeTypes_Https = "Https";
+    /// <summary>
+    /// Scheme type for Http - used in config based validations.
+    /// </summary>
+    public const string SchemeTypes_Http = "Http";
+    /// <summary>
+    /// Scheme type for Ftps - used in config based validations.
+    /// </summary>
+    public const string SchemeTypes_Ftps = "Ftps";
+    /// <summary>
+    /// Scheme type for Https - used in config based validations.
+    /// </summary>
+    public const string SchemeTypes_Ftp = "Ftp";
 
     /// <summary>
     /// The default maximum depth for validation options to prevent infinite loops in recursive validations. Used in <see cref="ValidationOptions" />.

@@ -21,6 +21,9 @@ public static class StaticData
         return new() { Address = address, NullableAge = nullableAge, Age = age, ContactMethods = contactMethods, DOB = dob, CompareDOB = olderDob, Email = "john.doe@gmail.com", FamilyName="Doe", GivenName = "John", Mobile="123456789", Title="Mr" };
     }
 
+    public static ValidationRuleConfig ValidationRuleConfigForUrlFormatValidator(string typeFullName, string propertyName, string displayName, string allowableSchemes, string failureMessage = "Should be a valid Url")
+
+    => new(typeFullName, propertyName, displayName, ValidatedConstants.RuleType_UrlFormat, "", allowableSchemes, failureMessage, 0, 0);
 
     public static ValidationRuleConfig ValidationRuleConfigForStringLengthValidator(string typeFullName, string propertyName, string displayName, int minLength, int maxLength)
 
