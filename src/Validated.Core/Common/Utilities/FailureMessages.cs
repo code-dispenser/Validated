@@ -88,6 +88,26 @@ internal static class FailureMessages
                             .Replace(Token.MAX_DATE, maxDate).Replace(Token.TODAY,todaysDate).ToString();
 
 
+
+    /// <summary>
+    /// Formats a failure message for decimal precision scale validation.
+    /// </summary>
+    /// <param name="messageTemplate">The message template that may contain tokens.</param>
+    /// <param name="validatedValue">The value that was validated, as a string.</param>
+    /// <param name="displayName">The user-friendly name of the member being validated.</param>
+    /// <param name="maxPrecision">The value used for the maximum number of digits</param>
+    /// <param name="maxScale">The value used for the maximum number of digits to the right of the decimal point.</param>
+    /// <param name="actualPrecision">The actual precision, number of digits provided for validation</param>
+    /// <param name="actualScale">The actual scale value, number of digits to the right of the decimal point provided for validation.</param>
+    /// <returns>A formatted validation failure message.</returns>
+    public static string FormatDecimalPrecisionScaleMessage(string messageTemplate, string validatedValue, string displayName, string maxPrecision, string maxScale, string actualPrecision, string actualScale)
+
+        => !RequiresTokenReplacement(messageTemplate)
+               ? messageTemplate
+                    : new StringBuilder(messageTemplate).Replace(Token.DISPLAY_NAME, displayName).Replace(Token.VALIDATED_VALUE, validatedValue)
+                            .Replace(Token.MAX_PRECISION, maxPrecision).Replace(Token.MAX_SCALE, maxScale).ToString()
+                            .Replace(Token.ACTUAL_PRECISION, actualPrecision).Replace(Token.ACTUAL_SCALE, actualScale).ToString();
+
     /// <summary>
     /// Indicates whether the template contains tokens that require replacement.
     /// </summary>

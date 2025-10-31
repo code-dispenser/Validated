@@ -43,4 +43,22 @@ public static class FailureMessageTokens
     /// Placeholder for the current date in a rolling date validation.
     /// </summary>
     public const string TODAY = "{Today}";
+
+    /// <summary>
+    /// Placeholder for the maximum precision value used for decimal precision scale validation.
+    /// </summary>
+    public const string MAX_PRECISION = "{MaxPrecision}";
+    /// <summary>
+    /// Placeholder for the maximum scale value used for decimal precision scale validation.
+    /// </summary>
+    public const string MAX_SCALE = "{MaxScale}";
+    /// <summary>
+    /// Placeholder for the actual precision value seen in decimal precision scale validation.
+    /// </summary>
+    public const string ACTUAL_PRECISION = "{ActualPrecision}";
+    /// <summary>
+    /// Placeholder for the actual scale value seen in decimal precision scale validation.
+    /// </summary>
+    public const string ACTUAL_SCALE = "{ActualScale}";
+
 }

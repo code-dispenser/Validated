@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
+using System.Globalization;
 using Validated.Core.Common.Constants;
 using Validated.Core.Tests.SharedDataFixtures.Common.Data;
 using Validated.Core.Tests.SharedDataFixtures.Common.Models;
@@ -193,7 +194,6 @@ public class MemberValidators_Tests
             }
         }
     }
-
 
 
     public class CreateStringLengthValidator
@@ -516,6 +516,7 @@ public class MemberValidators_Tests
         }
     }
 
+
     public class CreateUrlValidator
     {
         [Theory]
@@ -593,6 +594,144 @@ public class MemberValidators_Tests
                 validated.Should().Match<Validated<Uri>>(v => v.IsValid == false && v.Failures.Count == 1);
                 validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == "Path" && i.PropertyName == "Url" && i.DisplayName == "Url" && i.FailureMessage == "Invalid format");
             }
+        }
+    }
+
+
+    public class CreatePrecisionScaleValidator
+    {
+        //private MemberValidator<T> CreateDecimalValidator<T>()
+
+        
+        [Fact]
+        public async Task Should_return_invalid_if_the_value_to_validate_is_null()
+        {
+            var validator = MemberValidators.CreatePrecisionScaleValidator<string>(7, 4, "DecimalValue", "Value", "Should be valid", null);
+            var validated = await validator(null!);
+
+            using(new AssertionScope())
+            {
+                validated.Should().Match<Validated<string>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Failures[0].Should().Match<InvalidEntry>(i => i.PropertyName == "DecimalValue" && i.FailureMessage == "Should be valid");
+            }
+        }
+
+        [Fact]
+        public async Task Should_return_invalid_if_the_value_is_not_a_system_numeric_primitive()
+        {
+            var validator = MemberValidators.CreatePrecisionScaleValidator<DateTime>(7, 4, "DecimalValue", "Value", "Should be valid", null);
+            var validated = await validator(DateTime.UtcNow);
+
+            using (new AssertionScope())
+            {
+                validated.Should().Match<Validated<DateTime>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Failures[0].Should().Match<InvalidEntry>(i => i.PropertyName == "DecimalValue" && i.FailureMessage == "Should be valid");
+            }
+        }
+
+        [Theory]
+        [InlineData("23.455", 6, 3, true)]
+        [InlineData("23.456000", 6, 3, false)]
+        [InlineData("23.4561", 6, 3, false)]
+        [InlineData("123.4561", 6, 3, false)]
+        [InlineData("-123456789.123456789", 18, 9, true)]
+        [InlineData("123456789123456789.1234", 22, 6, true)]
+        [InlineData("123456789123456789.1234567899", 28, 12, true)]
+        [InlineData("-123456789123456789.12345678999", 28, 14, false)]
+        public async Task Should_return_a_valid_validated_if_the_decimal_value_Is_within_precision_and_scale_bounds(string valueToValidate,int precision, int scale,  bool shouldPass)
+        {
+            var validator = MemberValidators.CreatePrecisionScaleValidator<decimal>(precision, scale, "DecimalValue", "Value", "Should be valid", null);
+
+            decimal decimalValue = decimal.Parse(valueToValidate, CultureInfo.InvariantCulture);
+            var validated = await validator(decimalValue, "Path");
+
+            if(true == shouldPass)
+            {
+                validated.Should().Match<Validated<decimal>>(v => v.IsValid == true && v.Failures.Count == 0);
+                return;
+            }
+
+            using(new AssertionScope())
+            {
+                validated.Should().Match<Validated<decimal>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == "Path" && i.PropertyName == "DecimalValue" && i.DisplayName == "Value" && i.FailureMessage == "Should be valid");
+            }
+
+        }
+
+        [Fact]
+        public async Task Should_return_an_invalid_validated_when_the_value_is_too_big_for_a_decimal()
+        {
+            var validator = MemberValidators.CreatePrecisionScaleValidator<string>(20, 8, "DecimalValue", "Value", "Should be valid", null);
+            var validated = await validator("123456789123456789123456789999999999", "Path");
+
+            using (new AssertionScope())
+            {
+                validated.Should().Match<Validated<string>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == "Path" && i.PropertyName == "DecimalValue" && i.DisplayName == "Value" && i.FailureMessage == "Should be valid");
+            }
+
+        }
+
+        [Fact]
+        public async Task Should_return_a_valid_validated_when_the_value_has_trailing_zeros_but_is_still_in_length_bounds()
+        {
+            var decimalValue     = 123456789.990000000M;
+            var validator        = MemberValidators.CreatePrecisionScaleValidator<decimal>(18, 9, "DecimalValue", "Value", "Should be valid", null);
+            var validated        = await validator(decimalValue, "Path");
+            var validatedDecimal = validated.GetValueOr(42);
+
+            using (new AssertionScope())
+            {
+                validated.Should().Match<Validated<decimal>>(v => v.IsValid == true && v.Failures.Count == 0);
+                validatedDecimal.Should().Be(decimalValue);
+                validatedDecimal.Scale.Should().Be(9);
+            }
+        }
+
+        [Theory]
+        [InlineData(23, 6, 3, true)]
+        [InlineData(2300, 3, 3, false)]
+        [InlineData(2361, 6, 0, true)]
+        [InlineData(1234567, 6, 3, false)]
+        [InlineData(-123456789, 18, 9, true)]
+        [InlineData(123456789, 10, 6, true)]
+        [InlineData(-123456789, 9, 1, true)]
+        [InlineData(-123456789, 8, 0, false)]
+        public async Task Should_return_a_valid_validated_if_the_non_decimal_number_is_within_precision_and_scale_bounds(int valueToValidate, int precision, int scale, bool shouldPass)
+        {
+            var validator = MemberValidators.CreatePrecisionScaleValidator<int>(precision, scale, "IntValue", "Value", "Should be valid", null);
+
+            var validated = await validator(valueToValidate, "Path");
+
+            if (true == shouldPass)
+            {
+                validated.Should().Match<Validated<int>>(v => v.IsValid == true && v.Failures.Count == 0);
+                return;
+            }
+
+            using (new AssertionScope())
+            {
+                validated.Should().Match<Validated<int>>(v => v.IsValid == false && v.Failures.Count == 1);
+                validated.Failures[0].Should().Match<InvalidEntry>(i => i.Path == "Path" && i.PropertyName == "IntValue" && i.DisplayName == "Value" && i.FailureMessage == "Should be valid");
+            }
+
+        }
+
+        [Fact]
+        public async Task Should_return_a_valid_validated_when_using_culture_for_culture_specific_separators()
+        {
+            var validator = MemberValidators.CreatePrecisionScaleValidator<string>(7, 3, "StringValue", "Value", "Should be valid", new CultureInfo("de-DE"));
+
+            var stringValue = "1.230,123";
+            var validated = await validator(stringValue, "Path");//English is 1,230.123
+
+            using (new AssertionScope())
+            {
+                validated.Should().Match<Validated<string>>(v => v.IsValid == true && v.Failures.Count == 0);
+                validated.GetValueOr("42").Should().Be(stringValue);
+            }
+
         }
     }
 }

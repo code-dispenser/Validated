@@ -80,4 +80,23 @@ public class FailureMessages_Tests
 
         failureMessage.Should().Be($"The date of {valueToValidate:O} was not between the dates {minDate:O} and {maxDate:O} for Registration based on the date of {today:O}");
     }
+
+
+    [Fact]
+    public void Format_decimal_precision_scale_message_format_should_replace_the_value_to_validate_and_display_name_and_all_provided_precision_and_scale_tokens()
+    {
+        var maxPrecision    = "10";
+        var maxScale        = "5";
+        var actualPrecision = "12";
+        var actualScale     = "6";
+        var valueToValidate = "123456.123456";
+
+        var messageTemplate = $"The value: {Token.VALIDATED_VALUE} for: {Token.DISPLAY_NAME} did not meet the precision and scale requirements. " +
+                              $"The maximum precision and scale set were {Token.MAX_PRECISION} and {Token.MAX_SCALE} but found the actual precision and scale of {Token.ACTUAL_PRECISION} and {Token.ACTUAL_SCALE}";
+
+        var failureMessage = FailureMessages.FormatDecimalPrecisionScaleMessage(messageTemplate, valueToValidate.ToString(), "Amount",maxPrecision,maxScale,actualPrecision,actualScale);
+
+        failureMessage.Should().Be($"The value: 123456.123456 for: Amount did not meet the precision and scale requirements. " +
+                                   $"The maximum precision and scale set were 10 and 5 but found the actual precision and scale of 12 and 6");
+    }
 }

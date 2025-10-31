@@ -16,7 +16,6 @@ public static partial class MemberValidators
     /// <param name="displayName">The display name used in validation messages.</param>
     /// <param name="failureMessage">The message returned when the value is not a valid URL.</param>
     /// <returns>A member validator that checks URL format, host presence and allowed scheme.</returns>
-
     public static MemberValidator<T> CreateUrlValidator<T>(UrlSchemeTypes allowableSchemes, string propertyName, string displayName, string failureMessage) where T: notnull
 
         => (valueToValidate, path, _, _) =>
