@@ -16,20 +16,19 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/code-dispenser/Validated</RepositoryUrl>
     <PackageTags>validation;validator;data-validation;functional;functional-programming;fluent;csharp;.net;domain-driven-design;multi-tenant</PackageTags>
-	<Version>1.1.1</Version>
-    <AssemblyVersion>1.1.1</AssemblyVersion>
-    <FileVersion>1.1.1</FileVersion>
-	<InformationalVersion>1.1.1</InformationalVersion>
+	<Version>1.2.0</Version>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
+	<InformationalVersion>1.2.0</InformationalVersion>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	<Deterministic>true</Deterministic>
 	<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-	<PackageReleaseNotes>Nested conditional scopes with DoWhen/EndWhen pairs are now fully supported. 
+	<PackageReleaseNotes>Added a precision and scale validator for both non-configuration and configuration based validators. This validator can be used for types that are either decimal or convertible to decimal such as strings or integers. 
 
-The ValidationBuilder.Build method now throws InvalidOperationException if DoWhen calls are not matched with a corresponding EndWhen. 
-
-This validation was not present in version 1.1.0. If upgrading from 1.1.0 and using DoWhen, ensure each call has a matching EndWhen before calling Build to prevent this exception.</PackageReleaseNotes>
+Note: The validators only acertain if the provided value is valid, it does not convert non-decimal valid values to decimal.
+</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
