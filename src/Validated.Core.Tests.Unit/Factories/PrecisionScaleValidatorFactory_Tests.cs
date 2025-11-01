@@ -174,28 +174,6 @@ public class PrecisionScaleValidatorFactory_Tests
         }
     }
 
-    //[Fact]
-    //public async Task Create_from_configuration_should_handle_exception_with_valid_ruleConfig_and_log_actual_values()
-    //{
-    //    var logger = new InMemoryLoggerFactory().CreateLogger<PrecisionScaleValidatorFactory>();
-    //    Dictionary<string, string> additionalInfo = new() { [ValidatedConstants.RuleDictKey_Precision]="9", [ValidatedConstants.RuleDictKey_Scale]="5" };
-
-    //    var ruleConfig = StaticData.ValidationRuleConfigForPrecisionScaleValidator(nameof(ContactDto), "Amount", "Amount", "Should be a valid decimal", additionalInfo, "invalid-culture-xyz");
-    //    var validator  = new PrecisionScaleValidatorFactory(logger).CreateFromConfiguration<decimal>(ruleConfig);
-
-    //    var validated = await validator(123.45M, nameof(ContactDto));
-
-    //    using (new AssertionScope())
-    //    {
-    //        validated.Should().Match<Validated<decimal>>(v => v.IsValid == false && v.Failures.Count == 1);
-    //        validated.Failures[0].Should().Match<InvalidEntry>(i => i.Cause == CauseType.RuleConfigError && i.FailureMessage == "Should be a valid decimal");
-
-    //        var logEntry = ((InMemoryLogger<PrecisionScaleValidatorFactory>)logger).LogEntries[0];
-
-    //        logEntry.Should().Match<LogEntry>(l => l.Category == typeof(PrecisionScaleValidatorFactory).FullName  && l.Exception != null && l.Message.Contains("Configuration error"));
-    //    }
-    //}
-
 
     [Fact]
     public async Task Create_from_configuration_should_handle_exception_with_null_valueToValidate_and_log_null_placeholder()
