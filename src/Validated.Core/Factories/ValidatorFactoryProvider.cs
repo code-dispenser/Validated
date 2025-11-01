@@ -68,7 +68,8 @@ public sealed class ValidatorFactoryProvider : IValidatorFactoryProvider
             [ValidatedConstants.RuleType_CompareTo]        = new ComparisonValidatorFactory(loggerFactory?.CreateLogger<ComparisonValidatorFactory>() ?? NullLogger<ComparisonValidatorFactory>.Instance, ComparisonTypeFor.Value),
             [ValidatedConstants.RuleType_VOComparison]     = new ComparisonValidatorFactory(loggerFactory?.CreateLogger<ComparisonValidatorFactory>() ?? NullLogger<ComparisonValidatorFactory>.Instance, ComparisonTypeFor.ValueObject),
             [ValidatedConstants.RuleType_CollectionLength] = new CollectionLengthValidatorFactory(loggerFactory?.CreateLogger<CollectionLengthValidatorFactory>() ?? NullLogger<CollectionLengthValidatorFactory>.Instance),
-            [ValidatedConstants.RuleType_UrlFormat]        = new UrlFormatValidatorFactory(loggerFactory?.CreateLogger<UrlFormatValidatorFactory>() ?? NullLogger<UrlFormatValidatorFactory>.Instance)
+            [ValidatedConstants.RuleType_UrlFormat]        = new UrlFormatValidatorFactory(loggerFactory?.CreateLogger<UrlFormatValidatorFactory>() ?? NullLogger<UrlFormatValidatorFactory>.Instance),
+            [ValidatedConstants.RuleType_PrecisionScale]   = new PrecisionScaleValidatorFactory(loggerFactory?.CreateLogger<PrecisionScaleValidatorFactory>() ?? NullLogger<PrecisionScaleValidatorFactory>.Instance)
         };
     }
 

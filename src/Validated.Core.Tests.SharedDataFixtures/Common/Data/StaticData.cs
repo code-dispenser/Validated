@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Validated.Core.Common.Constants;
+using Validated.Core.Common.Utilities;
 using Validated.Core.Tests.SharedDataFixtures.Common.Models;
 using Validated.Core.Types;
 
@@ -20,6 +21,11 @@ public static class StaticData
 
         return new() { Address = address, NullableAge = nullableAge, Age = age, ContactMethods = contactMethods, DOB = dob, CompareDOB = olderDob, Email = "john.doe@gmail.com", FamilyName="Doe", GivenName = "John", Mobile="123456789", Title="Mr" };
     }
+
+    public static ValidationRuleConfig ValidationRuleConfigForPrecisionScaleValidator(string typeFullName, string propertyName, string displayName,string failureMessage, Dictionary<string,string>? additionalInfo = null, string cultureID = ValidatedConstants.Default_CultureID)
+
+        => new(typeFullName,propertyName,displayName,ValidatedConstants.RuleType_PrecisionScale,"","",failureMessage,0,0,"","","","","", ValidatedConstants.TargetType_Item, ValidatedConstants.Default_TenantID, cultureID, additionalInfo, default);
+
 
     public static ValidationRuleConfig ValidationRuleConfigForUrlFormatValidator(string typeFullName, string propertyName, string displayName, string allowableSchemes, string failureMessage = "Should be a valid Url")
 

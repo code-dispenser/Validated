@@ -79,6 +79,11 @@ public static class ValidatedConstants
     public const string RuleType_UrlFormat = "RuleType_UrlFormat";
 
     /// <summary>
+    /// Rule type for decimal precision and scale validation - used in config based validations.
+    /// </summary>
+    public const string RuleType_PrecisionScale = "RuleType_PrecisionScale";
+
+    /// <summary>
     /// Comparison type for equality check - used in config based validations.
     /// </summary>
     public const string CompareType_EqualTo = "CompareType_EqualTo";
@@ -204,6 +209,19 @@ public static class ValidatedConstants
     /// Scheme type for Https - used in config based validations.
     /// </summary>
     public const string SchemeTypes_Ftp = "Ftp";
+
+    /// <summary>
+    /// Rule dictionary key for the integer precision value - used in config based validations.
+    /// </summary>
+    public const string RuleDictKey_Precision = "Precision";
+    /// <summary>
+    /// Rule dictionary key for the scale value - used in config based validations.
+    /// </summary>
+    public const string RuleDictKey_Scale = "Scale";
+
+
+
+
 
     /// <summary>
     /// The default maximum depth for validation options to prevent infinite loops in recursive validations. Used in <see cref="ValidationOptions" />.
