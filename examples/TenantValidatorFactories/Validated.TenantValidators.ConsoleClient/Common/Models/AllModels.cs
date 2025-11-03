@@ -20,6 +20,10 @@ public record class ContactDto
     public int? NullableAge { get; set; }
     public int Age { get; set; }
 
+    public string? NullableStringUrl { get; set; } = null!;
+
+    public string StringAmount { get; set; } = "0.00";
+
     public List<string> Entries { get; set; } = [];
 
     public AddressDto Address { get; set; } = default!;

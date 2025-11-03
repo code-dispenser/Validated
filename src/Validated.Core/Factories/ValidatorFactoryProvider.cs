@@ -245,7 +245,7 @@ public sealed class ValidatorFactoryProvider : IValidatorFactoryProvider
                                                                   string tenantID = ValidatedConstants.Default_TenantID, string cultureID = ValidatedConstants.Default_CultureID)
     {
 
-        var targetType         = DetermineTargetType<T>();
+        var targetType = DetermineTargetType<T>();
  
         return configurations.Where(c => c.TypeFullName == typeFullName && c.PropertyName == propertyName && c.TargetType == targetType)
                 .GroupBy(c => new { c.RuleType, c.Pattern, c.MinLength, c.MaxLength, c.MinValue, c.MaxValue, c.CompareValue, c.ComparePropertyName, c.CompareType })  // Group by uniquely identifying rule content (NOT by tenant/culture)

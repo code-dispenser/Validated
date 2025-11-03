@@ -26,7 +26,12 @@ internal class Program
 
             await Rolling_DateOnly_Validator_Factory.Run(validatorFactoryProvider);
 
-            //await Comparison_Validator_Factory.Run(validatorFactoryProvider);
+            await Comparison_Validator_Factory.Run(validatorFactoryProvider);
+
+            await Url_Format_Validator_Factory.Run(validatorFactoryProvider);
+
+            await Precision_Scale_Validator_Factory.Run(validatorFactoryProvider);
+
         }
 
         await container.DisposeAsync();

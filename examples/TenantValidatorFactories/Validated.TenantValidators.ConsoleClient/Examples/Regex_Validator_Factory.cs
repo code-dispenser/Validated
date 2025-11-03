@@ -11,7 +11,7 @@ namespace Validated.TenantValidators.ConsoleClient.Examples;
 internal static class Regex_Validator_Factory
 {
     /*
-        * You would be getting a list from cache most likely populated from you database. 
+        * You would be getting a list from cache most likely populated from your database. 
     */ 
     private static ImmutableList<ValidationRuleConfig> GetRuleConfigs()
     {
@@ -35,7 +35,7 @@ internal static class Regex_Validator_Factory
             * Although it is possible to do: validatorFactoryProvider.GetValidatorFactory(ValidatedConstants.RuleType_Regex);
             * the validatorFactoryProvider will do this if the rule in the config data is RuleType_Regex.
             * You would also more than likely use the TenantValidationBuilder to create rules for an entire object 
-            * but you do not have.
+            * but you do not have to.
          */
 
         var contactData = StaticData.CreateContactObjectGraph();
