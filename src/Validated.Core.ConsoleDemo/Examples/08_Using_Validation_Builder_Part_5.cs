@@ -1,11 +1,8 @@
-﻿using System.Security.Authentication.ExtendedProtection;
-using Validated.Core.Builders;
-using Validated.Core.Common.Constants;
+﻿using Validated.Core.Builders;
 using Validated.Core.ConsoleDemo.Common.Data;
 using Validated.Core.ConsoleDemo.Common.Models;
 using Validated.Core.ConsoleDemo.Common.SharedValidators;
 using Validated.Core.Types;
-using Validated.Core.Validators;
 
 namespace Validated.Core.ConsoleDemo.Examples;
 
