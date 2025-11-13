@@ -18,6 +18,7 @@ It’s designed to make validation predictable, testable, and reusable — from 
 
 **Full documentation available at:** https://code-dispenser.gitbook.io/validated-docs
 
+**Video:** https://www.youtube.com/playlist?list=PLX1nSAB3AZpvrHnO-yaU_dBHBLOvGMRhB
 ## Features
 
 - Validated<T> result type (or applicative functor for those who care) for all validations (valid or invalid with failure details).
