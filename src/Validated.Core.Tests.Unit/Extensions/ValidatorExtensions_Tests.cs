@@ -27,7 +27,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<string>();
             var entityValidator = ValidatorExtensions.ForEntityMember<ContactDto, string>(memberValidator, c => c.Title);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using(new AssertionScope())
             {
@@ -44,7 +44,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<string>();
             var entityValidator = ValidatorExtensions.ForEntityMember<ContactDto, string>(memberValidator, c => c.Title);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid && v.Failures.Count == 0);
         }
@@ -56,7 +56,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreateFailingMemberValidator<string>(nameof(ContactDto.Title), nameof(ContactDto.Title), "Failed validation");
             var entityValidator = ValidatorExtensions.ForEntityMember<ContactDto, string>(memberValidator, c => c.Title);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -76,7 +76,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<string>();
             var entityValidator = ValidatorExtensions.ForNullableStringEntityMember<ContactDto>(memberValidator, c => c.Mobile);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -92,7 +92,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<string>();
             var entityValidator = ValidatorExtensions.ForNullableStringEntityMember<ContactDto>(memberValidator, c => c.Mobile);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -103,7 +103,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreateFailingMemberValidator<string>(nameof(ContactDto.Mobile), nameof(ContactDto.Mobile), "Failed validations");
             var entityValidator = ValidatorExtensions.ForNullableStringEntityMember<ContactDto>(memberValidator, c => c.Mobile);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -114,7 +114,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreateFailingMemberValidator<string>(nameof(ContactDto.Mobile), nameof(ContactDto.Mobile), "Failed validation");
             var entityValidator = ValidatorExtensions.ForNullableStringEntityMember<ContactDto>(memberValidator, c => c.Mobile);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -134,7 +134,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<int>();
             var entityValidator = ValidatorExtensions.ForNullableEntityMember<ContactDto, int>(memberValidator, c => c.NullableAge);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -150,7 +150,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<int>();
             var entityValidator = ValidatorExtensions.ForNullableEntityMember<ContactDto, int>(memberValidator, c => c.NullableAge);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -161,7 +161,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<int>();
             var entityValidator = ValidatorExtensions.ForNullableEntityMember<ContactDto, int>(memberValidator, c => c.NullableAge);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -173,7 +173,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreateFailingMemberValidator<int>(nameof(ContactDto.NullableAge), nameof(ContactDto.NullableAge), "Failed validation");
             var entityValidator = ValidatorExtensions.ForNullableEntityMember<ContactDto, int>(memberValidator, c => c.NullableAge);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -193,7 +193,7 @@ public class ValidatorExtensions_Tests
             var nestedValidator = StubbedValidators.CreatePassingEntityValidator<AddressDto>();
             var entityValidator = ValidatorExtensions.ForNestedEntityMember<ContactDto, AddressDto>(c => c.Address!, nestedValidator);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -210,7 +210,7 @@ public class ValidatorExtensions_Tests
             var nestedValidator = StubbedValidators.CreatePassingEntityValidator<AddressDto>();
             var entityValidator = ValidatorExtensions.ForNestedEntityMember<ContactDto, AddressDto>(c => c.Address!, nestedValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -223,7 +223,7 @@ public class ValidatorExtensions_Tests
             var nestedValidator = StubbedValidators.CreatePassingEntityValidator<AddressDto>();
             var entityValidator = ValidatorExtensions.ForNestedEntityMember<ContactDto, AddressDto>(c => c.Address!, nestedValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -240,7 +240,7 @@ public class ValidatorExtensions_Tests
             var nestedValidator = StubbedValidators.CreateFailingEntityValidator<AddressDto>(nameof(ContactDto.Address), nameof(ContactDto.Address), "Failed validation");
             var entityValidator = ValidatorExtensions.ForNestedEntityMember<ContactDto, AddressDto>(c => c.Address!, nestedValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -260,7 +260,7 @@ public class ValidatorExtensions_Tests
             var nestedValidator = StubbedValidators.CreatePassingEntityValidator<AddressDto>();
             var entityValidator = ValidatorExtensions.ForNullableNestedEntityMember<ContactDto, AddressDto>(c => c.Address, nestedValidator);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -277,7 +277,7 @@ public class ValidatorExtensions_Tests
             var nestedValidator = StubbedValidators.CreatePassingEntityValidator<AddressDto>();
             var entityValidator = ValidatorExtensions.ForNullableNestedEntityMember<ContactDto, AddressDto>(c => c.Address, nestedValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -290,7 +290,7 @@ public class ValidatorExtensions_Tests
             var nestedValidator = StubbedValidators.CreateFailingEntityValidator<AddressDto>(nameof(ContactDto.Address), nameof(ContactDto.Address), "Failed validation");//if null no need to check as its optional
             var entityValidator = ValidatorExtensions.ForNullableNestedEntityMember<ContactDto, AddressDto>(c => c.Address!, nestedValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -302,7 +302,7 @@ public class ValidatorExtensions_Tests
             var nestedValidator = StubbedValidators.CreateFailingEntityValidator<AddressDto>(nameof(ContactDto.Address), nameof(ContactDto.Address), "Failed validation");
             var entityValidator = ValidatorExtensions.ForNullableNestedEntityMember<ContactDto, AddressDto>(c => c.Address!, nestedValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -322,7 +322,7 @@ public class ValidatorExtensions_Tests
             var itemValidator = StubbedValidators.CreatePassingEntityValidator<ContactMethodDto>();
             var entityValidator = ValidatorExtensions.ForCollectionEntityMember<ContactDto, ContactMethodDto>(c => c.ContactMethods, itemValidator);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -339,7 +339,7 @@ public class ValidatorExtensions_Tests
             var itemValidator = StubbedValidators.CreatePassingEntityValidator<ContactMethodDto>();
             var entityValidator = ValidatorExtensions.ForCollectionEntityMember<ContactDto, ContactMethodDto>(c => c.ContactMethods, itemValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -352,7 +352,7 @@ public class ValidatorExtensions_Tests
             var itemValidator = StubbedValidators.CreateFailingEntityValidator<ContactMethodDto>(nameof(ContactMethodDto.MethodType), nameof(ContactMethodDto.MethodType), "Failed validation");
             var entityValidator = ValidatorExtensions.ForCollectionEntityMember<ContactDto, ContactMethodDto>(c => c.ContactMethods, itemValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -370,7 +370,7 @@ public class ValidatorExtensions_Tests
             var itemValidator = StubbedValidators.CreatePassingEntityValidator<ContactMethodDto>();
             var entityValidator = ValidatorExtensions.ForCollectionEntityMember<ContactDto, ContactMethodDto>(c => c.ContactMethods, itemValidator);
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -390,7 +390,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<ContactDto>();
             var entityValidator = ValidatorExtensions.ToCompareEntityMember<ContactDto, DateOnly>(memberValidator, c => c.DOB);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -407,7 +407,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<ContactDto>();
 
             var entityValidator = ValidatorExtensions.ToCompareEntityMember<ContactDto, DateOnly>(memberValidator, c => c.DOB);
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -419,7 +419,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreateFailingMemberValidator<ContactDto>(nameof(ContactDto.DOB), "Date of birth", "Comparison failed");
 
             var entityValidator = ValidatorExtensions.ToCompareEntityMember<ContactDto, DateOnly>(memberValidator, c => c.DOB);
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -439,7 +439,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<DateOnly>();
             var entityValidator = ValidatorExtensions.ToCompareEntityValue<ContactDto, DateOnly>(memberValidator, c => c.DOB);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -456,7 +456,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreatePassingMemberValidator<DateOnly>();
 
             var entityValidator = ValidatorExtensions.ToCompareEntityValue<ContactDto, DateOnly>(memberValidator, c => c.DOB);
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -469,7 +469,7 @@ public class ValidatorExtensions_Tests
             var memberValidator = StubbedValidators.CreateFailingMemberValidator<DateOnly>(nameof(ContactDto.DOB), "Date of birth", "Comparison failed");
 
             var entityValidator = ValidatorExtensions.ToCompareEntityValue<ContactDto, DateOnly>(memberValidator, c => c.DOB);
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -490,7 +490,7 @@ public class ValidatorExtensions_Tests
             var itemValidator = StubbedValidators.CreatePassingMemberValidator<string>();
             var entityValidator = ValidatorExtensions.ForEachPrimitiveItem<ContactDto, string>(c => c.Entries, itemValidator);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -509,7 +509,7 @@ public class ValidatorExtensions_Tests
 
             contact.Entries = null!;
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -528,7 +528,7 @@ public class ValidatorExtensions_Tests
 
             contact.Entries = ["NotChecked-PassingStubbedValidation"]!;
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid && v.Failures.Count == 0);
         }
@@ -542,7 +542,7 @@ public class ValidatorExtensions_Tests
 
             contact.Entries = ["FailOne", "FailTwo"]!;
 
-            var validated = await entityValidator(contact);
+            var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -561,7 +561,7 @@ public class ValidatorExtensions_Tests
             var itemValidator = StubbedValidators.CreatePassingMemberValidator<List<ContactMethodDto>>();
             var entityValidator = ValidatorExtensions.ForCollection<ContactDto, List<ContactMethodDto>>(c => c.ContactMethods, itemValidator);
 
-            var validated = await entityValidator(null!);
+            var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -586,7 +586,7 @@ public class ValidatorExtensions_Tests
 
             var validationOptions = new ValidationOptions { MaxRecursionDepth =5 };
 
-            var validated = await validator(null!, "", new(validationOptions)); ;
+            var validated = await validator(null!, "", new(validationOptions), cancellationToken: TestContext.Current.CancellationToken); ;
 
             using (new AssertionScope())
             {
@@ -608,7 +608,7 @@ public class ValidatorExtensions_Tests
 
             var validationOptions = new ValidationOptions { MaxRecursionDepth =5 };
 
-            var validated = await validator(nodeChain, "", new(validationOptions));
+            var validated = await validator(nodeChain, "", new(validationOptions), cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<Node>>(v => v.IsValid == false && v.Failures.Count == 6);//5 + 1 max depth message
         }
@@ -623,7 +623,7 @@ public class ValidatorExtensions_Tests
             var nodeNameValidator = ValidatorExtensions.ForEntityMember<Node, string>(nameValidator, n => n.Name);
             var validator = ValidatorExtensions.ForRecursiveEntity<Node>(c => c.Child!, nodeNameValidator);
 
-            var validated = await validator(nodeChain);//default depth is 100;
+            var validated = await validator(nodeChain, cancellationToken: TestContext.Current.CancellationToken);//default depth is 100;
 
             validated.Should().Match<Validated<Node>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -658,7 +658,7 @@ public class ValidatorExtensions_Tests
 
             var parentChild = StaticData.BuildParentChildRelationships();
 
-            var validated = await parentValidator(parentChild);
+            var validated = await parentValidator(parentChild, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<Parent>>(v => v.IsValid == false && v.Failures.Count == 12);
 
@@ -681,7 +681,7 @@ public class ValidatorExtensions_Tests
             contact.GivenName = "Paul";
 
             var validator = failingEntityValidator.When(c => c.GivenName == givenName);
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             if (givenName == "Paul")// passes when to execute failing validator
             {
@@ -705,7 +705,7 @@ public class ValidatorExtensions_Tests
             var failingEntityValidator = StubbedValidators.CreateSimpleEntityValidator<ContactDto>(41, nameof(ContactDto.Age), nameof(ContactDto.Age), "Should be 42");
 
             var validator = failingEntityValidator.When(c => c.GivenName == "Paul");
-            var validated = await validator(null!, nameof(ContactDto));
+            var validated = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
                 using (new AssertionScope())
                 {

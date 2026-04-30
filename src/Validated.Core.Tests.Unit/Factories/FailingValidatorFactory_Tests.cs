@@ -13,7 +13,7 @@ public class FailingValidatorFactory_Tests
         var ruleConfig = StaticData.ValidationRuleConfigForFailedValidator("TypeFullName", "PropertyName", "DisplayName", "Always Fail");
         var validator  = new FailingValidatorFactory().CreateFromConfiguration<string>(ruleConfig);
 
-        var validated = await validator("test", "TypeFullName");
+        var validated = await validator("test", "TypeFullName", cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<string>>(v => v.IsValid == false && v.Failures.Count ==1);
     }

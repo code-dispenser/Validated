@@ -28,7 +28,7 @@ public class PrecisionScaleValidatorFactory_Tests
 
         var validator = CreateConfiguredValidatorFactory<string>(nameof(ContactDto), "Amount", "Amount", additionalInfo);
 
-        var validated = await validator("1234.5679", nameof(ContactDto));
+        var validated = await validator("1234.5679", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<string>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -46,7 +46,7 @@ public class PrecisionScaleValidatorFactory_Tests
 
         var validator = CreateConfiguredValidatorFactory<string>(nameof(ContactDto), "Amount", "Amount", additionalInfo);
 
-        var validated = await validator("1234.56789", nameof(ContactDto));
+        var validated = await validator("1234.56789", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -61,7 +61,7 @@ public class PrecisionScaleValidatorFactory_Tests
     {
         var validator = CreateConfiguredValidatorFactory<string>(nameof(ContactDto), "Amount", "Amount",null);
 
-        var validated = await validator("1234.56789", nameof(ContactDto));
+        var validated = await validator("1234.56789", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -83,7 +83,7 @@ public class PrecisionScaleValidatorFactory_Tests
         Dictionary<string, string> additionalInfo = new() { [ValidatedConstants.RuleDictKey_Precision]="9", [ValidatedConstants.RuleDictKey_Scale]="5" };
         var validator = CreateConfiguredValidatorFactory<string>(nameof(ContactDto), "Amount", "Amount",additionalInfo,cultureID!);
 
-        var validated = await validator(amount, nameof(ContactDto));
+        var validated = await validator(amount, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         if (true == shouldPass)
         {
@@ -101,7 +101,7 @@ public class PrecisionScaleValidatorFactory_Tests
         Dictionary<string, string> additionalInfo = new() { [ValidatedConstants.RuleDictKey_Precision]="9", [ValidatedConstants.RuleDictKey_Scale]="5" };
         var validator = CreateConfiguredValidatorFactory<string>(nameof(ContactDto), "Amount", "Amount", additionalInfo, "de-DE");
 
-        var validated = await validator("1.230,45", nameof(ContactDto));//using German separators so dot and commas reversed.
+        var validated = await validator("1.230,45", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);//using German separators so dot and commas reversed.
 
         validated.Should().Match<Validated<string>>(v => v.IsValid == true && v.Failures.Count == 0);
 
@@ -124,7 +124,7 @@ public class PrecisionScaleValidatorFactory_Tests
 
         decimal decimalValue = decimal.Parse(valueToValidate, CultureInfo.InvariantCulture);
 
-        var validated = await validator(decimalValue, "Path");
+        var validated = await validator(decimalValue, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
         if (true == shouldPass)
         {
@@ -147,7 +147,7 @@ public class PrecisionScaleValidatorFactory_Tests
         Dictionary<string, string> additionalInfo = new() { [ValidatedConstants.RuleDictKey_Precision]="9", [ValidatedConstants.RuleDictKey_Scale]="5" };
         var validator = CreateConfiguredValidatorFactory<DateTime>(nameof(ContactDto), "Amount", "Amount", additionalInfo);
 
-        var validated = await validator(DateTime.UtcNow, nameof(ContactDto));
+        var validated = await validator(DateTime.UtcNow, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -164,7 +164,7 @@ public class PrecisionScaleValidatorFactory_Tests
         var logger    = new InMemoryLoggerFactory().CreateLogger<PrecisionScaleValidatorFactory>();
         var validator = new PrecisionScaleValidatorFactory(logger).CreateFromConfiguration<string>(null!);
 
-        var validated = await validator("123.456", nameof(ContactDto));
+        var validated = await validator("123.456", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -183,7 +183,7 @@ public class PrecisionScaleValidatorFactory_Tests
 
         var ruleConfig = StaticData.ValidationRuleConfigForPrecisionScaleValidator(nameof(ContactDto), "Amount", "Amount", "Should be a valid decimal", additionalInfo);
         var validator  = new PrecisionScaleValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
-        var validated  = await validator(null!, nameof(ContactDto));
+        var validated  = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

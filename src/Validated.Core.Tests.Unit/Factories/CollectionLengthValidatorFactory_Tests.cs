@@ -19,7 +19,7 @@ public class CollectionLengthValidatorFactory_Tests
         var logger     = new InMemoryLoggerFactory().CreateLogger<CollectionLengthValidatorFactory>();
         var validator  = new CollectionLengthValidatorFactory(logger).CreateFromConfiguration<List<ContactMethodDto>>(ruleConfig);
 
-        var validated = await validator(contact.ContactMethods, nameof(ContactDto));
+        var validated = await validator(contact.ContactMethods, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<List<ContactMethodDto>>>(v => v.IsValid == true && v.Failures.Count == 0);
 
@@ -33,7 +33,7 @@ public class CollectionLengthValidatorFactory_Tests
         var logger      = new InMemoryLoggerFactory().CreateLogger<CollectionLengthValidatorFactory>();
         var validator   = new CollectionLengthValidatorFactory(logger).CreateFromConfiguration<List<ContactMethodDto>>(ruleConfig);
 
-        var validated = await validator(contact.ContactMethods, nameof(ContactDto));
+        var validated = await validator(contact.ContactMethods, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using(new AssertionScope())
         {
@@ -54,7 +54,7 @@ public class CollectionLengthValidatorFactory_Tests
 
         contact.ContactMethods = null!;
 
-        var validated = await validator(contact.ContactMethods, nameof(ContactDto));
+        var validated = await validator(contact.ContactMethods, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -73,7 +73,7 @@ public class CollectionLengthValidatorFactory_Tests
         var logger      = new InMemoryLoggerFactory().CreateLogger<CollectionLengthValidatorFactory>();
         var validator  = new CollectionLengthValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated = await validator(contact.GivenName, nameof(ContactDto));
+        var validated = await validator(contact.GivenName, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -95,7 +95,7 @@ public class CollectionLengthValidatorFactory_Tests
 
         HashSet<string> hash = ["StringOne", "StringTwo"];
 
-        var validated = await validator(hash, "Path");
+        var validated = await validator(hash, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<HashSet<string>>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -108,7 +108,7 @@ public class CollectionLengthValidatorFactory_Tests
         var logger      = new InMemoryLoggerFactory().CreateLogger<CollectionLengthValidatorFactory>();
         var validator   = new CollectionLengthValidatorFactory(logger).CreateFromConfiguration<List<ContactMethodDto>>(null!);
 
-        var validated = await validator(contact.ContactMethods, nameof(ContactDto));
+        var validated = await validator(contact.ContactMethods, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

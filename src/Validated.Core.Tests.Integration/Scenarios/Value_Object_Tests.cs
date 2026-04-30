@@ -23,8 +23,8 @@ public class Value_Object_Tests
         var startDateValidator = MemberValidators.CreateCompareToValidator<DateOnly>(endDate, CompareType.LessThan, nameof(DateRange.StartDate), "Start date", "Should be less than the end date");
         var endDateValidator   = MemberValidators.CreateRangeValidator<DateOnly>(minDate, maxDate, nameof(DateRange.EndDate), "End date", $"Should be between {minDate} and {maxDate}");
 
-        var validatedStartDate = await startDateValidator(startDate);
-        var validatedEndDate   = await endDateValidator(endDate);
+        var validatedStartDate = await startDateValidator(startDate, cancellationToken: TestContext.Current.CancellationToken);
+        var validatedEndDate   = await endDateValidator(endDate, cancellationToken: TestContext.Current.CancellationToken);
 
         var validatedDateRange = DateRange.Create(validatedStartDate, validatedEndDate);
         
@@ -51,8 +51,8 @@ public class Value_Object_Tests
         var startDateValidator      = validatorProviderFactory.CreateValidator<DateOnly>(typeof(DateRange).FullName!, nameof(DateRange.StartDate), ruleConfigs); //uses compare to config entry
         var endDateValidator        = validatorProviderFactory.CreateValidator<DateOnly>(typeof(DateRange).FullName!,nameof(DateRange.EndDate), ruleConfigs);   // uses compare to other value
 
-        var validatedStartDate = await startDateValidator(startDate);
-        var validatedEndDate   = await endDateValidator(endDate,"",startDate);
+        var validatedStartDate = await startDateValidator(startDate, cancellationToken: TestContext.Current.CancellationToken);
+        var validatedEndDate   = await endDateValidator(endDate,"",startDate, cancellationToken: TestContext.Current.CancellationToken);
 
         var validatedDateRange = DateRange.Create(validatedStartDate, validatedEndDate);
 

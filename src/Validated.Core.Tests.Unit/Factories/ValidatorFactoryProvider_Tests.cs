@@ -111,7 +111,7 @@ public class ValidatorFactoryProvider_Tests
 
         var validator = validatorProviderFactory.CreateValidator<string>(typeof(ContactDto).FullName!, nameof(ContactDto.FamilyName),ruleConfig);
 
-        var validated = await validator(valueToValidate, nameof(ContactDto));
+        var validated = await validator(valueToValidate, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         if (failureCount == 0)
         {
@@ -131,7 +131,7 @@ public class ValidatorFactoryProvider_Tests
         var validatorProviderFactory = new ValidatorFactoryProvider(inMemoryLoggerFactory);
 
         var validator = validatorProviderFactory.CreateValidator<string>(typeof(ContactDto).FullName!, "Fake_Property", ruleConfig);
-        var validated = await validator("Fake Value", nameof(ContactDto));
+        var validated = await validator("Fake Value", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -157,7 +157,7 @@ public class ValidatorFactoryProvider_Tests
 
         var validator = validatorProviderFactory.CreateValidator<string>(typeof(ContactDto).FullName! ,"PropertyName",ruleConfig);
 
-        var validated = await validator("SomeValue",nameof(ContactDto));
+        var validated = await validator("SomeValue",nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

@@ -19,7 +19,7 @@ public class RangeValidatorFactory_Tests
         var logger = new InMemoryLoggerFactory().CreateLogger<RangeValidatorFactory>();
         var validator = new RangeValidatorFactory(logger).CreateFromConfiguration<T>(ruleConfig);
 
-        var validated = await validator(valueToValidate, "TypeFullName");
+        var validated = await validator(valueToValidate, "TypeFullName", cancellationToken: TestContext.Current.CancellationToken);
 
         if (true == shouldPass)
         {
@@ -88,7 +88,7 @@ public class RangeValidatorFactory_Tests
         var logger     = new InMemoryLoggerFactory().CreateLogger<RangeValidatorFactory>();
         var validator  = new RangeValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated = await validator(null!, "Path");
+        var validated = await validator(null!, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<string>>(v => v.IsValid == false && v.Failures.Count ==1);
     }
@@ -103,7 +103,7 @@ public class RangeValidatorFactory_Tests
         var validator = new RangeValidatorFactory(logger).CreateFromConfiguration<int>(ruleConfig);
 
 
-        var validated = await validator(15, "TypeFullName");
+        var validated = await validator(15, "TypeFullName", cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -121,7 +121,7 @@ public class RangeValidatorFactory_Tests
         var logger = new InMemoryLoggerFactory().CreateLogger<RangeValidatorFactory>();
         var validator = new RangeValidatorFactory(logger).CreateFromConfiguration<int>(null!);
 
-        var validated = await validator(42, nameof(ContactDto));
+        var validated = await validator(42, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -139,7 +139,7 @@ public class RangeValidatorFactory_Tests
         var logger    = new InMemoryLoggerFactory().CreateLogger<RangeValidatorFactory>();
         var validator = new RangeValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig!);
 
-        var validated = await validator(null!, nameof(ContactDto));
+        var validated = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

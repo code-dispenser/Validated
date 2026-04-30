@@ -31,7 +31,7 @@ public class MemberValidators_Tests
         public async Task Create_regex_validator_should_return_a_valid_validated_if_the_value_matches_the_pattern()
         {
             var validator = MemberValidators.CreateRegexValidator<int>("^[0-9]{2,}$", "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator(42, "Path");
+            var validated = await validator(42, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<int>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -39,7 +39,7 @@ public class MemberValidators_Tests
         public async Task Create_regex_validator_should_return_an_invalid_validated_when_the_value_fails_to_match_the_pattern()
         {
             var validator = MemberValidators.CreateRegexValidator<int>("^[A-Za-z]{2,}$", "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator(42);//no root object need for the path leave blank for the property name to be used
+            var validated = await validator(42, cancellationToken: TestContext.Current.CancellationToken);//no root object need for the path leave blank for the property name to be used
 
             using (new AssertionScope())
             {
@@ -54,7 +54,7 @@ public class MemberValidators_Tests
             object valueToValidate = null!;
 
             var validator = MemberValidators.CreateRegexValidator<object>("^[A-Za-z]{2,}$", "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator(valueToValidate!, "Path");
+            var validated = await validator(valueToValidate!, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -80,13 +80,13 @@ public class MemberValidators_Tests
 
             if (false == String.IsNullOrWhiteSpace(valueToValidate))
             {
-                var validatedGood = (await validator(valueToValidate))
+                var validatedGood = (await validator(valueToValidate, cancellationToken: TestContext.Current.CancellationToken))
                                     .Should().Match<Validated<string>>(r => r.IsValid == true && r.Failures.Count == 0);
 
                 return;
             }
 
-            var validatedBad = (await validator(valueToValidate!)).Should().Match<Validated<string>>(v => v.IsValid == false && v.Failures.Count == 1);
+            var validatedBad = (await validator(valueToValidate!, cancellationToken: TestContext.Current.CancellationToken)).Should().Match<Validated<string>>(v => v.IsValid == false && v.Failures.Count == 1);
 
         }
 
@@ -94,7 +94,7 @@ public class MemberValidators_Tests
         public async Task Create_not_null_or_empty_validator_should_return_a_valid_validated_for_value_types()
         {
             var validator = MemberValidators.CreateNotNullOrEmptyValidator<int>("PropertyName", "DisplayName", "FailureName");
-            var validated = (await validator(1))
+            var validated = (await validator(1, cancellationToken: TestContext.Current.CancellationToken))
                                     .Should().Match<Validated<int>>(r => r.IsValid == true && r.Failures.Count == 0);
         }
 
@@ -102,7 +102,7 @@ public class MemberValidators_Tests
         public async Task Create_not_null_or_empty_validator_should_return_an_invalid_validated_for_empty_enumerable()
         {
             var validator = MemberValidators.CreateNotNullOrEmptyValidator<List<object>>("PropertyName", "DisplayName", "FailureName");
-            var validated = (await validator([]))
+            var validated = (await validator([], cancellationToken: TestContext.Current.CancellationToken))
                                 .Should().Match<Validated<List<object>>>(r => r.IsValid == false && r.Failures.Count == 1);
         }
 
@@ -117,7 +117,7 @@ public class MemberValidators_Tests
         {
 
             var validator = MemberValidators.CreatePredicateValidator<string>(s => s.Length > 5, "PropertyName", "DisplayName", "Value must be longer than 5 characters");
-            var validated = await validator("ValidString");
+            var validated = await validator("ValidString", cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<string>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -126,7 +126,7 @@ public class MemberValidators_Tests
         public async Task Create_predicate_validator_should_return_invalid_when_predicate_returns_false()
         {
             var validator = MemberValidators.CreatePredicateValidator<string>(s => s.Length > 10, "PropertyName", "DisplayName", "Value must be longer than 10 characters");
-            var validated = await validator("Short");
+            var validated = await validator("Short", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -139,7 +139,7 @@ public class MemberValidators_Tests
         public async Task Create_predicate_validator_should_return_use_an_empty_string_for_the_value_in_failure_messages_replacements_if_null()
         {
             var validator = MemberValidators.CreatePredicateValidator<string>(s => s.Length > 10, "PropertyName", "DisplayName", "Value must be longer than 10 characters but the value was: {ValidatedValue}");
-            var validated = await validator(null!);
+            var validated = await validator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -162,7 +162,7 @@ public class MemberValidators_Tests
         {
             var validator = MemberValidators.CreateRangeValidator(minValue, maxValue, "PropertyName", "DisplayName", "Should be within range");
 
-            (await validator(value)).Should().Match<Validated<int>>(v => v.IsValid == true && v.Failures.Count == 0);
+            (await validator(value, cancellationToken: TestContext.Current.CancellationToken)).Should().Match<Validated<int>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
         [Theory]
         [InlineData(-11, -10, 10)]
@@ -171,7 +171,7 @@ public class MemberValidators_Tests
         {
             var validator = MemberValidators.CreateRangeValidator(minValue, maxValue, "PropertyName", "DisplayName", "Should be within range");
 
-            var validated = await validator(value, "Path");
+            var validated = await validator(value, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -184,7 +184,7 @@ public class MemberValidators_Tests
         public async Task Create_range_validator_should_return_use_an_empty_string_for_the_value_in_failure_messages_replacements_if_null()
         {
             var validator = MemberValidators.CreateRangeValidator("1", "10", "PropertyName", "DisplayName", "Should be within range but found [{ValidatedValue}] which is not");
-            var validated = await validator(null!);
+            var validated = await validator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -205,7 +205,7 @@ public class MemberValidators_Tests
         public async Task Create_string_length_validator_should_return_a_valid_validated_when_the_length_is_within_the_min_max_values_inclusive(string valueToValidate, int minLength, int maxLength)
         {
             var validator = MemberValidators.CreateStringLengthValidator(minLength, maxLength, "PropertyName", "DisplayName", "Outside of the min max lengths");
-            var validated = await validator(valueToValidate);
+            var validated = await validator(valueToValidate, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<string>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -216,7 +216,7 @@ public class MemberValidators_Tests
         public async Task Create_string_length_validator_should_return_an_invalid_validated_when_the_length_is_outside_of_the_min_max_values(string valueToValidate, int minLength, int maxLength)
         {
             var validator = MemberValidators.CreateStringLengthValidator(minLength, maxLength, "PropertyName", "DisplayName", "Outside of the min max lengths");
-            var validated = await validator(valueToValidate);
+            var validated = await validator(valueToValidate, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -230,7 +230,7 @@ public class MemberValidators_Tests
         public async Task Create_string_length_validator_should_return_an_invalid_validated_if_the_string_value_is_null()
         {
             var validator = MemberValidators.CreateStringLengthValidator(1, 10, "PropertyName", "DisplayName", "Outside of the min max lengths");
-            var validated = await validator(null!, "Path");
+            var validated = await validator(null!, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -249,7 +249,7 @@ public class MemberValidators_Tests
         public async Task Create_string_regex_validator_should_return_a_valid_validated_if_the_value_matches_the_pattern()
         {
             var validator = MemberValidators.CreateStringRegexValidator("^[0-9]{2,}$", "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator("42");
+            var validated = await validator("42", cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<String>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -257,7 +257,7 @@ public class MemberValidators_Tests
         public async Task Create_string_regex_validator_should_return_an_invalid_validated_when_the_value_fails_to_match_the_pattern()
         {
             var validator = MemberValidators.CreateStringRegexValidator("^[A-Za-z]{2,}$", "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator("42");
+            var validated = await validator("42", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -273,7 +273,7 @@ public class MemberValidators_Tests
             string valueToValidate = null!;
 
             var validator = MemberValidators.CreateStringRegexValidator("^[A-Za-z]{2,}$", "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator(valueToValidate!, "Path");
+            var validated = await validator(valueToValidate!, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -292,7 +292,7 @@ public class MemberValidators_Tests
         public async Task Create_collection_length_validator_should_return_an_invalid_validated_if_the_collection_is_null()
         {
             var validator = MemberValidators.CreateCollectionLengthValidator<List<int>>(1, 5, "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator(null!);
+            var validated = await validator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<List<int>>>(v => v.IsValid == false && v.Failures.Count == 1);
         }
@@ -300,7 +300,7 @@ public class MemberValidators_Tests
         public async Task Create_collection_length_validator_should_return_an_invalid_validated_if_the_type_is_not_a_collection()
         {
             var validator = MemberValidators.CreateCollectionLengthValidator<int>(1, 5, "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator(42);
+            var validated = await validator(42, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<int>>(v => v.IsValid == false && v.Failures.Count == 1);
         }
@@ -308,7 +308,7 @@ public class MemberValidators_Tests
         public async Task Create_collection_length_validator_should_return_a_valid_validated_for_a_hash_set_if_length_is_valid()
         {
             var validator = MemberValidators.CreateCollectionLengthValidator<HashSet<int>>(1, 5, "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator([1, 2, 3]);
+            var validated = await validator([1, 2, 3], cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<HashSet<int>>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -324,7 +324,7 @@ public class MemberValidators_Tests
         public async Task Create_collection_length_validator_should_return_a_valid_validated_if_valid(int minLength, int maxLength, bool shouldPass)
         {
             var validator = MemberValidators.CreateCollectionLengthValidator<List<int>>(minLength, maxLength, "PropertyName", "DisplayName", "FailureMessage");
-            var validated = await validator([1, 2, 3, 4, 5]);
+            var validated = await validator([1, 2, 3, 4, 5], cancellationToken: TestContext.Current.CancellationToken);
 
             if (true == shouldPass)
             {
@@ -353,7 +353,7 @@ public class MemberValidators_Tests
         public async Task Create_compare_to_validator_should_return_a_valid_validated_for_a_correct_comparison_given_the_comparison_type(int valueToValidate, int compareTo, CompareType compareType)
         {
             var validator = MemberValidators.CreateCompareToValidator(compareTo, compareType, "PropertyName", "DisplayName", "Comparison failed");
-            var validated = await validator(valueToValidate);
+            var validated = await validator(valueToValidate, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<int>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -368,7 +368,7 @@ public class MemberValidators_Tests
         public async Task Create_compare_to_validator_should_return_an_invalid_validated_for_an_incorrect_comparison_given_the_comparison_type(int valueToValidate, int compareTo, CompareType compareType)
         {
             var validator = MemberValidators.CreateCompareToValidator(compareTo, compareType, "PropertyName", "DisplayName", "Comparison failed");
-            var validated = await validator(valueToValidate);
+            var validated = await validator(valueToValidate, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -383,7 +383,7 @@ public class MemberValidators_Tests
         public async Task Create_compare_to_validator_should_not_throw_exceptions_but_instead_return_an_invalid_validated_for_incorrect_compare_types()
         {
             var validator = MemberValidators.CreateCompareToValidator<string>("test", (CompareType)999, "PropertyName", "DisplayName", "Comparison failed");
-            var validated = await validator("value", "Path");
+            var validated = await validator("value", "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -401,7 +401,7 @@ public class MemberValidators_Tests
             int[] valueTwo = [1, 2, 3];
 
             var validator = MemberValidators.CreateCompareToValidator<int[]>(valueOne, CompareType.EqualTo, "PropertyName", "DisplayName", "Comparison failed");
-            var validated = await validator(valueTwo, "Path");
+            var validated = await validator(valueTwo, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -417,7 +417,7 @@ public class MemberValidators_Tests
             string valueOne = null!, valueTwo = null!;
 
             var validator = MemberValidators.CreateCompareToValidator<string>(valueOne, CompareType.EqualTo, "PropertyName", "DisplayName", "Comparison failed");
-            var validated = await validator(valueTwo, "Path");
+            var validated = await validator(valueTwo, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -432,7 +432,7 @@ public class MemberValidators_Tests
             var throwingValue = new ThrowingComparable();
 
             var validator = MemberValidators.CreateCompareToValidator<ThrowingComparable>(throwingValue, CompareType.EqualTo, "PropertyName", "DisplayName", "Comparison failed");
-            var validated = await validator(new ThrowingComparable(), nameof(ThrowingComparable));
+            var validated = await validator(new ThrowingComparable(), nameof(ThrowingComparable), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -459,7 +459,7 @@ public class MemberValidators_Tests
             var contact = StaticData.CreateContactObjectGraph() with { DOB = dob, CompareDOB = olderDob };
 
             var validator = MemberValidators.CreateMemberComparisonValidator<ContactDto, DateOnly>(c => c.DOB, c => c.CompareDOB, compareType, "Date of birth", "Comparison failed");
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -476,7 +476,7 @@ public class MemberValidators_Tests
             var contact = StaticData.CreateContactObjectGraph() with { DOB = dob, CompareDOB = olderDob };
 
             var validator = MemberValidators.CreateMemberComparisonValidator<ContactDto, DateOnly>(c => c.DOB, c => c.CompareDOB, compareType, "Date of birth", "Comparison failed");
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -496,7 +496,7 @@ public class MemberValidators_Tests
             var contact = StaticData.CreateContactObjectGraph() with { DOB = dob, CompareDOB = olderDob };
 
             var validator = MemberValidators.CreateMemberComparisonValidator<ContactDto, DateOnly>(c => c.DOB, c => c.CompareDOB, CompareType.EqualTo, "Date of birth", "Comparison failed");
-            var validated = await validator(contact);
+            var validated = await validator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
         }
@@ -505,7 +505,7 @@ public class MemberValidators_Tests
         public async Task Create_member_comparison_validator_should_return_an_invalid_validated_when_an_exception_is_encountered()
         {
             var validator = MemberValidators.CreateMemberComparisonValidator<ThrowingProperty, string>(x => x.GoodProperty, x => x.BadProperty, CompareType.EqualTo, "Good Property", "Comparison failed");
-            var validated = await validator(new ThrowingProperty());
+            var validated = await validator(new ThrowingProperty(), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -526,7 +526,7 @@ public class MemberValidators_Tests
         {
             var validator = MemberValidators.CreateUrlValidator<string>(allowableSchemes, "Url", "Url", "Invalid format");
 
-            var validated = await validator(valueEoValidate!, "Path");
+            var validated = await validator(valueEoValidate!, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using(new AssertionScope())
             {
@@ -543,7 +543,7 @@ public class MemberValidators_Tests
         {
             var validator = MemberValidators.CreateUrlValidator<string>(allowableSchemes, "Url", "Url", "Invalid format");
 
-            var validated = await validator(valueEoValidate!, "Path");
+            var validated = await validator(valueEoValidate!, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -558,7 +558,7 @@ public class MemberValidators_Tests
         {
             var validator = MemberValidators.CreateUrlValidator<string>(allowableSchemes, "Url", "Url", "Invalid format");
 
-            var validated = await validator(valueToValidate, "Path");
+            var validated = await validator(valueToValidate, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             if (true == shouldFail)
             {
@@ -587,7 +587,7 @@ public class MemberValidators_Tests
         {
             var validator = MemberValidators.CreateUrlValidator<Uri>(allowableSchemes, "Url", "Url", "Invalid format");
 
-            var validated = await validator(valueEoValidate!, "Path");
+            var validated = await validator(valueEoValidate!, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -607,7 +607,7 @@ public class MemberValidators_Tests
         public async Task Should_return_invalid_if_the_value_to_validate_is_null()
         {
             var validator = MemberValidators.CreatePrecisionScaleValidator<string>(7, 4, "DecimalValue", "Value", "Should be valid", null);
-            var validated = await validator(null!);
+            var validated = await validator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
             using(new AssertionScope())
             {
@@ -620,7 +620,7 @@ public class MemberValidators_Tests
         public async Task Should_return_invalid_if_the_value_is_not_a_system_numeric_primitive()
         {
             var validator = MemberValidators.CreatePrecisionScaleValidator<DateTime>(7, 4, "DecimalValue", "Value", "Should be valid", null);
-            var validated = await validator(DateTime.UtcNow);
+            var validated = await validator(DateTime.UtcNow, cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -643,7 +643,7 @@ public class MemberValidators_Tests
             var validator = MemberValidators.CreatePrecisionScaleValidator<decimal>(precision, scale, "DecimalValue", "Value", "Should be valid", null);
 
             decimal decimalValue = decimal.Parse(valueToValidate, CultureInfo.InvariantCulture);
-            var validated = await validator(decimalValue, "Path");
+            var validated = await validator(decimalValue, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             if(true == shouldPass)
             {
@@ -663,7 +663,7 @@ public class MemberValidators_Tests
         public async Task Should_return_an_invalid_validated_when_the_value_is_too_big_for_a_decimal()
         {
             var validator = MemberValidators.CreatePrecisionScaleValidator<string>(20, 8, "DecimalValue", "Value", "Should be valid", null);
-            var validated = await validator("123456789123456789123456789999999999", "Path");
+            var validated = await validator("123456789123456789123456789999999999", "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -678,7 +678,7 @@ public class MemberValidators_Tests
         {
             var decimalValue     = 123456789.990000000M;
             var validator        = MemberValidators.CreatePrecisionScaleValidator<decimal>(18, 9, "DecimalValue", "Value", "Should be valid", null);
-            var validated        = await validator(decimalValue, "Path");
+            var validated        = await validator(decimalValue, "Path", cancellationToken: TestContext.Current.CancellationToken);
             var validatedDecimal = validated.GetValueOr(42);
 
             using (new AssertionScope())
@@ -702,7 +702,7 @@ public class MemberValidators_Tests
         {
             var validator = MemberValidators.CreatePrecisionScaleValidator<int>(precision, scale, "IntValue", "Value", "Should be valid", null);
 
-            var validated = await validator(valueToValidate, "Path");
+            var validated = await validator(valueToValidate, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             if (true == shouldPass)
             {
@@ -724,7 +724,7 @@ public class MemberValidators_Tests
             var validator = MemberValidators.CreatePrecisionScaleValidator<string>(7, 3, "StringValue", "Value", "Should be valid", new CultureInfo("de-DE"));
 
             var stringValue = "1.230,123";
-            var validated = await validator(stringValue, "Path");//English is 1,230.123
+            var validated = await validator(stringValue, "Path", cancellationToken: TestContext.Current.CancellationToken);//English is 1,230.123
 
             using (new AssertionScope())
             {

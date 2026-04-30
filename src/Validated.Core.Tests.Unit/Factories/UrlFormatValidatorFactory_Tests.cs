@@ -27,7 +27,7 @@ public class UrlFormatValidatorFactory_Tests
 
         contact.StringUrl = "https://www.google.com";
 
-        var validated = await validator(contact.StringUrl, nameof(ContactDto));
+        var validated = await validator(contact.StringUrl, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<string>>(v => v.IsValid == true && v.Failures.Count == 0);
 
@@ -41,7 +41,7 @@ public class UrlFormatValidatorFactory_Tests
 
         contact.StringUrl = "https://www.google.com";
 
-        var validated = await validator(contact.StringUrl, nameof(ContactDto));
+        var validated = await validator(contact.StringUrl, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -57,7 +57,7 @@ public class UrlFormatValidatorFactory_Tests
 
         contact.StringUrl = "http://www.google.com";
 
-        var validated = await validator(contact.StringUrl, nameof(ContactDto));
+        var validated = await validator(contact.StringUrl, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -73,7 +73,7 @@ public class UrlFormatValidatorFactory_Tests
   
         contact.StringUrl = "www.google.com";
 
-        var validated = await validator(contact.StringUrl, nameof(ContactDto));
+        var validated = await validator(contact.StringUrl, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -86,7 +86,7 @@ public class UrlFormatValidatorFactory_Tests
     public async Task Create_from_configuration_should_return_an_invalid_validated_with_a_cause_of_config_error_if_the_type_validated_is_not_a_string_or_uri()
     {
         var validator = CreateConfiguredValidatorFactory<int>(nameof(ContactDto), "Url", "Url", ValidatedConstants.SchemeTypes_All);
-        var validated = await validator(42, nameof(ContactDto));
+        var validated = await validator(42, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -98,7 +98,7 @@ public class UrlFormatValidatorFactory_Tests
     public async Task Create_from_configuration_should_return_an_invalid_validated_with_a_null_uri()
     {
         var validator = CreateConfiguredValidatorFactory<Uri>(nameof(ContactDto), "Url", "Url", ValidatedConstants.SchemeTypes_All);
-        var validated = await validator(null!, nameof(ContactDto));
+        var validated = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -115,7 +115,7 @@ public class UrlFormatValidatorFactory_Tests
 
         contact.StringUrl = "bad://www.google.com";
 
-        var validated = await validator(contact.StringUrl, nameof(ContactDto));
+        var validated = await validator(contact.StringUrl, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -131,7 +131,7 @@ public class UrlFormatValidatorFactory_Tests
 
         contact.StringUrl = "ftps:123//www.google.com";
 
-        var validated = await validator(contact.StringUrl, nameof(ContactDto));
+        var validated = await validator(contact.StringUrl, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -151,7 +151,7 @@ public class UrlFormatValidatorFactory_Tests
 
         contact.StringUrl = "https://www.google.com";
 
-        var validated = await validator(contact.StringUrl, nameof(ContactDto));
+        var validated = await validator(contact.StringUrl, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -170,7 +170,7 @@ public class UrlFormatValidatorFactory_Tests
 
         contact.StringUrl = "https://www.google.com";
 
-        var validated = await validator(contact.FamilyName, nameof(ContactDto));
+        var validated = await validator(contact.FamilyName, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -189,7 +189,7 @@ public class UrlFormatValidatorFactory_Tests
         var logger    = new InMemoryLoggerFactory().CreateLogger<UrlFormatValidatorFactory>();
         var validator = new UrlFormatValidatorFactory(logger).CreateFromConfiguration<string>(null!);
 
-        var validated = await validator(null!, nameof(ContactDto));
+        var validated = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

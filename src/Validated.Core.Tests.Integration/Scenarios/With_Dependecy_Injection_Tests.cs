@@ -60,7 +60,7 @@ public class With_Dependency_Injection_Tests
                                             .ForNullableMember(c => c.NullableAge)
                                                 .Build();
 
-        var validated = await contactValidator(contactData, nameof(ContactDto));
+        var validated = await contactValidator(contactData, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -104,7 +104,7 @@ public class With_Dependency_Injection_Tests
                                             .ForNullableMember(c => c.NullableAge)
                                                 .Build();
 
-        var validated = await contactValidator(contactData, nameof(ContactDto));
+        var validated = await contactValidator(contactData, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -151,7 +151,7 @@ public class With_Dependency_Injection_Tests
                                             .ForNullableMember(c => c.NullableAge)
                                                 .Build();
 
-        var validated = await contactValidator(contactData, nameof(ContactDto));
+        var validated = await contactValidator(contactData, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -176,7 +176,7 @@ public class With_Dependency_Injection_Tests
                                     .ForCollection(c => c.Entries)    // rule is items 1 - 5
                                         .Build();
 
-        var validated = await validator(contactData);
+        var validated = await validator(contactData, cancellationToken: TestContext.Current.CancellationToken);
 
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
@@ -205,7 +205,7 @@ public class With_Dependency_Injection_Tests
                             .ForMember(c => c.Age)
                                 .Build();
 
-        var validated = await validator(contactData);
+        var validated = await validator(contactData, cancellationToken: TestContext.Current.CancellationToken);
 
         if (true == shouldPass)
         {

@@ -19,7 +19,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.EntityObject).CreateFromConfiguration<T>(ruleConfig);
 
-            var validated = await validator(valueToValidate, typeof(T).Name);
+            var validated = await validator(valueToValidate, typeof(T).Name, cancellationToken: TestContext.Current.CancellationToken);
 
             if (true == shouldPass)
             {
@@ -76,7 +76,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.EntityObject).CreateFromConfiguration<ContactDto>(ruleConfig);
 
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
         }
@@ -89,7 +89,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.EntityObject).CreateFromConfiguration<ContactDto>(null!);
 
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -110,7 +110,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.EntityObject).CreateFromConfiguration<ContactDto>(ruleConfig);
 
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -128,7 +128,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<T>(ruleConfig);
 
-            var validated = await validator(valueToValidate, "TypeFullName");
+            var validated = await validator(valueToValidate, "TypeFullName", cancellationToken: TestContext.Current.CancellationToken);
 
             if (true == shouldPass)
             {
@@ -262,7 +262,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<string>(ruleConfig!);
 
-            var validated = await validator("test", nameof(ContactDto));
+            var validated = await validator("test", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -280,7 +280,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<string>(null!);
 
-            var validated = await validator("test", nameof(ContactDto));
+            var validated = await validator("test", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -298,7 +298,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<string>(ruleConfig);
 
-            var validated = await validator("test", nameof(ContactDto));
+            var validated = await validator("test", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -365,7 +365,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, (ComparisonTypeFor)999).CreateFromConfiguration<int>(ruleConfig);
 
-            var validated = await validator(42, "Path");
+            var validated = await validator(42, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -381,7 +381,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.Value).CreateFromConfiguration<string>(ruleConfig);
 
-            var validated = await validator(null!, nameof(ContactDto));//using null for value to exercise valueToValidate?.ToString() ?? ""
+            var validated = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);//using null for value to exercise valueToValidate?.ToString() ?? ""
 
             using (new AssertionScope())
             {
@@ -503,7 +503,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.ValueObject).CreateFromConfiguration<string>(null!);
 
-            var validated = await validator("test", "ValueObject", "test");
+            var validated = await validator("test", "ValueObject", "test", cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {
@@ -521,7 +521,7 @@ public class ComparisonValidatorFactory_Tests
             var logger = new InMemoryLoggerFactory().CreateLogger<ComparisonValidatorFactory>();
             var validator = new ComparisonValidatorFactory(logger, ComparisonTypeFor.ValueObject).CreateFromConfiguration<string>(ruleConfig);
 
-            var validated = await validator(null!, nameof(ContactDto), null);// value to validate set to null to also exercise valueToValidate?.ToString() ?? "" for code coverage.
+            var validated = await validator(null!, nameof(ContactDto), null, cancellationToken: TestContext.Current.CancellationToken);// value to validate set to null to also exercise valueToValidate?.ToString() ?? "" for code coverage.
 
             using (new AssertionScope())
             {

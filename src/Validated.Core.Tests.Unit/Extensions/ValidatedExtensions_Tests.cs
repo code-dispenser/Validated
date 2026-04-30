@@ -21,7 +21,7 @@ public class ValidatedExtensions_Tests
             var validatorTwo = happyPath ? StubbedValidators.CreatePassingMemberValidator<int>() : StubbedValidators.CreateFailingMemberValidator<int>("PropertyNameTwo", "DisplayNameTwo", "FailureMessageTwo");
 
             var validator = ValidatedExtensions.AndThen(validatorOne, validatorTwo);
-            var validated = await validator(42, "Path");
+            var validated = await validator(42, "Path", cancellationToken: TestContext.Current.CancellationToken);
 
             if (true == happyPath)
             {
@@ -236,7 +236,7 @@ public class ValidatedExtensions_Tests
             var validatorThree = happyPath ? StubbedValidators.CreatePassingEntityValidator<ContactDto>() : StubbedValidators.CreateFailingEntityValidator<ContactDto>("PropertyNameTwo", "DisplayNameTwo", "FailureMessageTwo");
 
             var validator = ValidatedExtensions.Combine(validatorOne, validatorTwo, validatorThree);
-            var validated = await validator(new ContactDto(), nameof(ContactDto));
+            var validated = await validator(new ContactDto(), nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             if (true == happyPath)
             {
@@ -268,7 +268,7 @@ public class ValidatedExtensions_Tests
             var validatorOne = happyPath ? StubbedValidators.CreatePassingMemberValidator<string>() : StubbedValidators.CreateFailingMemberValidator<string>("PropertyOne", "PropertyOne", "Value one is in valid");
             var validatorTwo = happyPath ? StubbedValidators.CreatePassingMemberValidator<int>() : StubbedValidators.CreateFailingMemberValidator<int>("PropertyTwo", "PropertyTwo", "Value two is in valid");
 
-            var validated = (await validatorOne("ValueOne", "Path"), await validatorTwo(42, "Path")).Combine((name, age) => new CombineWithTwoParam(name, age));
+            var validated = (await validatorOne("ValueOne", "Path", cancellationToken: TestContext.Current.CancellationToken), await validatorTwo(42, "Path", cancellationToken: TestContext.Current.CancellationToken)).Combine((name, age) => new CombineWithTwoParam(name, age));
 
             if (true == happyPath)
             {
@@ -298,7 +298,7 @@ public class ValidatedExtensions_Tests
 
             var dob = DateOnly.FromDateTime(new DateTime(2000, 01, 01));
 
-            var validated = (await validatorOne("ValueOne", "Path"), await validatorTwo(42, "Path"), await validatorThree(dob, "Path")).Combine((name, age, dob) => new CombineWithThreeParam(name, age, dob));
+            var validated = (await validatorOne("ValueOne", "Path", cancellationToken: TestContext.Current.CancellationToken), await validatorTwo(42, "Path", cancellationToken: TestContext.Current.CancellationToken), await validatorThree(dob, "Path", cancellationToken: TestContext.Current.CancellationToken)).Combine((name, age, dob) => new CombineWithThreeParam(name, age, dob));
 
             if (true == happyPath)
             {
@@ -329,7 +329,7 @@ public class ValidatedExtensions_Tests
 
             var dob = DateOnly.FromDateTime(new DateTime(2000, 01, 01));
 
-            var validated = (await validatorOne("ValueOne", "Path"), await validatorTwo(42, "Path"), await validatorThree(dob, "Path"), await validatorFour(1.23M, "Path"))
+            var validated = (await validatorOne("ValueOne", "Path", cancellationToken: TestContext.Current.CancellationToken), await validatorTwo(42, "Path", cancellationToken: TestContext.Current.CancellationToken), await validatorThree(dob, "Path", cancellationToken: TestContext.Current.CancellationToken), await validatorFour(1.23M, "Path", cancellationToken: TestContext.Current.CancellationToken))
                                 .Combine((name, age, dob, total) => new CombineWithFourParam(name, age, dob, total));
 
             if (true == happyPath)

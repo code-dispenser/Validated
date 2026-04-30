@@ -20,7 +20,7 @@ public class ValidatorFactoryProvider_Tests
 
         var validator = rollingDateValidator.CreateFromConfiguration<DateOnly>(rulesConfig);
 
-        var validated = await validator(DateOnly.FromDateTime(DateTime.Now.AddYears(-6)), "Path");
+        var validated = await validator(DateOnly.FromDateTime(DateTime.Now.AddYears(-6)), "Path", cancellationToken: TestContext.Current.CancellationToken);
 
         using(new AssertionScope())
         {

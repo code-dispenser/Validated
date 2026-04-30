@@ -43,7 +43,7 @@ public class TenantValidationBuilder_Tests
 
         var builder   = CreateTenantBuilder<ContactDto>(ruleConfigs);
         var validator = builder.ForMember(c => c.GivenName).Build();
-        var validated = await validator(null!, nameof(ContactDto));
+        var validated = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using(new AssertionScope())
         {
@@ -65,7 +65,7 @@ public class TenantValidationBuilder_Tests
             * Data hs name of John
         */
         var validator = builder.ForMember(c => c.GivenName).Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -81,7 +81,7 @@ public class TenantValidationBuilder_Tests
         var builder = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         var validator = builder.ForNullableMember(c => c.NullableAge).Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
 
@@ -97,7 +97,7 @@ public class TenantValidationBuilder_Tests
         contact.NullableAge = null;
 
         var validator = builder.ForNullableMember(c => c.NullableAge).Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
 
@@ -114,7 +114,7 @@ public class TenantValidationBuilder_Tests
             * Mobiles has a single regex requiring a UK formatted mobile number but data is set to 123456789, so should fail regex
         */
         var validator = builder.ForNullableStringMember(c => c.Mobile).Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -135,7 +135,7 @@ public class TenantValidationBuilder_Tests
         contact.Mobile = null;
 
         var validator = builder.ForNullableStringMember(c => c.Mobile).Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -161,7 +161,7 @@ public class TenantValidationBuilder_Tests
 
         var validator = builder.ForNestedMember<AddressDto>(c => c.Address!, addressValidator).Build();
 
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -191,7 +191,7 @@ public class TenantValidationBuilder_Tests
 
         var validator = builder.ForNullableNestedMember<AddressDto>(c => c.Address, addressValidator).Build();
 
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -219,7 +219,7 @@ public class TenantValidationBuilder_Tests
 
         contact.Address = null;
 
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
 
@@ -237,7 +237,7 @@ public class TenantValidationBuilder_Tests
         contact.CompareDOB  = new DateOnly(1980, 6, 15);
 
         var validator = builder.ForComparisonWith<DateOnly>(c => c.DOB).Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true &&  v.Failures.Count == 0);
     }
@@ -252,7 +252,7 @@ public class TenantValidationBuilder_Tests
         contact.Age = 18;
 
         var validator = builder.ForComparisonWithValue<int>(c => c.Age).Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true &&  v.Failures.Count == 0);
     }
@@ -274,7 +274,7 @@ public class TenantValidationBuilder_Tests
 
         var collectionValidator = builder.ForEachCollectionMember<ContactMethodDto>(c => c.ContactMethods, methodValidator).Build();
 
-        var validated = await collectionValidator(contact, nameof(ContactDto));
+        var validated = await collectionValidator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count ==0);
     }
@@ -291,7 +291,7 @@ public class TenantValidationBuilder_Tests
 
         var validator = builder.ForEachPrimitiveItem(c => c.Entries).Build();
 
-        var validated = await validator(contact);
+        var validated = await validator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -313,7 +313,7 @@ public class TenantValidationBuilder_Tests
 
         var validator = builder.ForCollection<IEnumerable>(c => c.Entries).Build();
 
-        var validated = await validator(contact);
+        var validated = await validator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
 
@@ -329,7 +329,7 @@ public class TenantValidationBuilder_Tests
 
 
         var validator = builder.ForEachPrimitiveItem(c => c.Entries).ForCollection<IEnumerable>(c => c.Entries).Build();
-        var validated = await validator(contact);
+        var validated = await validator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -355,7 +355,7 @@ public class TenantValidationBuilder_Tests
         var builder     = CreateTenantBuilder<ContactDto>(ruleConfigs);
 
         var validator = builder.Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -370,7 +370,7 @@ public class TenantValidationBuilder_Tests
         contact.GivenName = "J";
 
         var validator = builder.ForMember(c => c.GivenName).ForMember(c => c.GivenName).Build();
-        var validated = await validator(contact, nameof(ContactDto));
+        var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);//there would be 2 if both validators were added
     }
@@ -391,7 +391,7 @@ public class TenantValidationBuilder_Tests
         var childNameValidator = builder.ForMember<string>(n => n.Name).Build();
         var validator = builderTwo.ForRecursiveEntity(n => n.Child!, childNameValidator).Build();
 
-        var validated = await validator(nodeChain, "", new(new ValidationOptions { MaxRecursionDepth = 5 }));//5 + 1 max depth message
+        var validated = await validator(nodeChain, "", new(new ValidationOptions { MaxRecursionDepth = 5 }), cancellationToken: TestContext.Current.CancellationToken);//5 + 1 max depth message
 
         using (new AssertionScope())
         {
@@ -411,7 +411,7 @@ public class TenantValidationBuilder_Tests
                                         .ForMember(c => c.GivenName)
                                             .Build(true);
 
-        var validated = await entityValidator(null!);
+        var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -431,7 +431,7 @@ public class TenantValidationBuilder_Tests
                                         .ForMember(c => c.GivenName)
                                             .Build(false);
 
-        var validated = await entityValidator(null!);
+        var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
  
 
@@ -457,7 +457,7 @@ public class TenantValidationBuilder_Tests
                                         .ForMember(c => c.GivenName)
                                             .Build(true);
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
 

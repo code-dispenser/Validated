@@ -21,7 +21,7 @@ public class ValidationBuilder_Tests
 
         contact.Entries = null!;
         var validator = ValidationBuilder<ContactDto>.Create().ForCollection(c => c.Entries, memberValidator).Build();
-        var validated = await validator(contact);
+        var validated = await validator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == false && v.Failures.Count == 1);
     }
@@ -34,7 +34,7 @@ public class ValidationBuilder_Tests
 
         contact.Entries = ["StringOne", "StringToLong"];
         var validator = ValidationBuilder<ContactDto>.Create().ForEachPrimitiveItem(c => c.Entries, memberValidator).Build();
-        var validated = await validator(contact);
+        var validated = await validator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -58,7 +58,7 @@ public class ValidationBuilder_Tests
                             .ForRecursiveEntity(c => c.Child!, childValidator)
                                 .Build();
 
-        var validated = await validator(nodeChain, "", new(new ValidationOptions { MaxRecursionDepth = 5 }));//5 + 1 max depth message
+        var validated = await validator(nodeChain, "", new(new ValidationOptions { MaxRecursionDepth = 5 }), cancellationToken: TestContext.Current.CancellationToken);//5 + 1 max depth message
 
         using (new AssertionScope())
         {
@@ -80,7 +80,7 @@ public class ValidationBuilder_Tests
                             .ForRecursiveEntity(c => c.Child!, childValidator)
                                 .Build();
 
-        var validated = await validator(nodeChain, "", new(new ValidationOptions { MaxRecursionDepth = 10 }));//5 + 1 max depth message
+        var validated = await validator(nodeChain, "", new(new ValidationOptions { MaxRecursionDepth = 10 }), cancellationToken: TestContext.Current.CancellationToken);//5 + 1 max depth message
     }
 
 
@@ -104,7 +104,7 @@ public class ValidationBuilder_Tests
             contact.Title     = "D";
             contact.Age       = 55;
 
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             if (givenName == "Paul")//Passes condition so runs validation
             {
@@ -167,7 +167,7 @@ public class ValidationBuilder_Tests
 
 
 
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             if (givenName == "Paul" && familyName == "Kent")//Passes both conditions so runs validation
             {
@@ -209,7 +209,7 @@ public class ValidationBuilder_Tests
             contact.Title     = "D";
             contact.Age       = 55;
 
-            var validated = await validator(contact, nameof(ContactDto));
+            var validated = await validator(contact, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
             using (new AssertionScope())
             {

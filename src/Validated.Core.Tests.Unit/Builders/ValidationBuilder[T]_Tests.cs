@@ -25,7 +25,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForMember(c => c.GivenName, memberValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -38,7 +38,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForNullableMember(c => c.NullableAge, memberValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -51,7 +51,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForNullableStringMember(c => c.Mobile, memberValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -64,7 +64,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForNestedMember(c => c.Address!, nestedValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -77,7 +77,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForNullableNestedMember(c => c.Address, nestedValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -90,7 +90,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForEachCollectionMember(c => c.ContactMethods, nestedValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -103,7 +103,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForComparisonWithMember(c => c.DOB, memberValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -116,7 +116,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForEachPrimitiveItem<string>(c => c.Entries, memberValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -129,7 +129,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create().ForCollection(c => c.Entries, memberValidator);
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -142,7 +142,7 @@ public class ValidationBuilder_Tests
         var builder         = ValidationBuilder<ContactDto>.Create();
         var entityValidator = builder.Build();
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<ContactDto>>(v => v.IsValid == true && v.Failures.Count == 0);
     }
@@ -158,7 +158,7 @@ public class ValidationBuilder_Tests
                                 .ForCollection(c => c.Entries, listValidator)
                                 .Build(failFastOnNull: true);
         
-        var validated = await entityValidator(null!);
+        var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
         using(new AssertionScope())
         {
@@ -179,7 +179,7 @@ public class ValidationBuilder_Tests
                                 .ForCollection(c => c.Entries, listValidator)
                                 .Build(failFastOnNull: false);
 
-        var validated = await entityValidator(null!);
+        var validated = await entityValidator(null!, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -203,7 +203,7 @@ public class ValidationBuilder_Tests
                                 .ForCollection(c => c.Entries, listValidator)
                                 .Build(failFastOnNull: true);
 
-        var validated = await entityValidator(contact);
+        var validated = await entityValidator(contact, cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

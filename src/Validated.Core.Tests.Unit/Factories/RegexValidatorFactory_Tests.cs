@@ -20,7 +20,7 @@ public class RegexValidatorFactory_Tests
         var logger      = new InMemoryLoggerFactory().CreateLogger<RegexValidatorFactory>();
         var validator   = new RegexValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated  = await validator(contact.FamilyName, nameof(ContactDto));
+        var validated  = await validator(contact.FamilyName, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<string>>(v => v.IsValid == true && v.Failures.Count == 0);
 
@@ -33,7 +33,7 @@ public class RegexValidatorFactory_Tests
         var logger     = new InMemoryLoggerFactory().CreateLogger<RegexValidatorFactory>();
         var validator  = new RegexValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated  = await validator(contact.FamilyName, nameof(ContactDto));
+        var validated  = await validator(contact.FamilyName, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -54,7 +54,7 @@ public class RegexValidatorFactory_Tests
         var logger      = new InMemoryLoggerFactory().CreateLogger<RegexValidatorFactory>();
         var validator   = new RegexValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated = await validator(valueToValidate!, nameof(ContactDto));
+        var validated = await validator(valueToValidate!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -72,7 +72,7 @@ public class RegexValidatorFactory_Tests
         var logger      = new InMemoryLoggerFactory().CreateLogger<RegexValidatorFactory>();
         var validator   = new RegexValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated = await validator(contact.FamilyName, nameof(ContactDto));
+        var validated = await validator(contact.FamilyName, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -90,7 +90,7 @@ public class RegexValidatorFactory_Tests
         var logger    = new InMemoryLoggerFactory().CreateLogger<RegexValidatorFactory>();
         var validator = new RegexValidatorFactory(logger).CreateFromConfiguration<string>(null!);
 
-        var validated = await validator("test", nameof(ContactDto));
+        var validated = await validator("test", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

@@ -17,7 +17,7 @@ public class RollingDateOnlyValidatorFactory_Tests
         var logger     = new InMemoryLoggerFactory().CreateLogger<Core.Factories.RollingDateOnlyValidatorFactory>();
         var validator  = new RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.Now), logger).CreateFromConfiguration<DateOnly>(ruleConfig);
 
-        var validated = await validator(valueToValidate, "TypeFullName");
+        var validated = await validator(valueToValidate, "TypeFullName", cancellationToken: TestContext.Current.CancellationToken);
 
         if (true == shouldPass)
         {
@@ -59,7 +59,7 @@ public class RollingDateOnlyValidatorFactory_Tests
         var logger     = new InMemoryLoggerFactory().CreateLogger<Core.Factories.RollingDateOnlyValidatorFactory>();
         var validator  = new Core.Factories.RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.Now), logger).CreateFromConfiguration<DateOnly>(ruleConfig);
 
-        var validated = await validator(DateOnly.FromDateTime(DateTime.Now), "TypeFullName");
+        var validated = await validator(DateOnly.FromDateTime(DateTime.Now), "TypeFullName", cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -77,7 +77,7 @@ public class RollingDateOnlyValidatorFactory_Tests
         var logger      = new InMemoryLoggerFactory().CreateLogger<Core.Factories.RollingDateOnlyValidatorFactory>();
         var validator   = new Core.Factories.RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.Now), logger).CreateFromConfiguration<int>(ruleConfig);
 
-        var validated = await validator(15, "TypeFullName");
+        var validated = await validator(15, "TypeFullName", cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -97,7 +97,7 @@ public class RollingDateOnlyValidatorFactory_Tests
         var logger    = new InMemoryLoggerFactory().CreateLogger<Core.Factories.RollingDateOnlyValidatorFactory>();
         var validator = new Core.Factories.RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.Now), logger).CreateFromConfiguration<DateOnly>(null!);
 
-        var validated = await validator(DateOnly.FromDateTime(DateTime.Now), nameof(ContactDto));
+        var validated = await validator(DateOnly.FromDateTime(DateTime.Now), nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -115,7 +115,7 @@ public class RollingDateOnlyValidatorFactory_Tests
         var logger    = new InMemoryLoggerFactory().CreateLogger<RollingDateOnlyValidatorFactory>();
         var validator = new RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.Now), logger).CreateFromConfiguration<string>(ruleConfig!);
 
-        var validated = await validator(null!, nameof(ContactDto));
+        var validated = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -133,7 +133,7 @@ public class RollingDateOnlyValidatorFactory_Tests
         var logger    = new InMemoryLoggerFactory().CreateLogger<RollingDateOnlyValidatorFactory>();
         var validator = new RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.Now), logger).CreateFromConfiguration<string>(ruleConfig!);
 
-        var validated = await validator("2000-01-01", nameof(ContactDto));
+        var validated = await validator("2000-01-01", nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -150,7 +150,7 @@ public class RollingDateOnlyValidatorFactory_Tests
         var logger = new InMemoryLoggerFactory().CreateLogger<RollingDateOnlyValidatorFactory>();
         var validator = new RollingDateOnlyValidatorFactory(() => DateOnly.FromDateTime(DateTime.Now), logger).CreateFromConfiguration<DateOnly>(ruleConfig!);
 
-        var validated = await validator(DateOnly.Parse("2000-01-01"), nameof(ContactDto));
+        var validated = await validator(DateOnly.Parse("2000-01-01"), nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {

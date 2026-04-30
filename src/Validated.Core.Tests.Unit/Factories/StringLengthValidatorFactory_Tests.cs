@@ -19,7 +19,7 @@ public class StringLengthValidatorFactory_Tests
         var logger     = new InMemoryLoggerFactory().CreateLogger<StringLengthValidatorFactory>();
         var validator  = new StringLengthValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated = await validator(contact.FamilyName, nameof(ContactDto));
+        var validated = await validator(contact.FamilyName, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         validated.Should().Match<Validated<string>>(v => v.IsValid == true && v.Failures.Count == 0);
         
@@ -32,7 +32,7 @@ public class StringLengthValidatorFactory_Tests
         var logger     = new InMemoryLoggerFactory().CreateLogger<StringLengthValidatorFactory>();
         var validator  = new StringLengthValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated  = await validator(contact.FamilyName, nameof(ContactDto));
+        var validated  = await validator(contact.FamilyName, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using(new AssertionScope())
         {
@@ -50,7 +50,7 @@ public class StringLengthValidatorFactory_Tests
         var logger      = new InMemoryLoggerFactory().CreateLogger<StringLengthValidatorFactory>();
         var validator   = new StringLengthValidatorFactory(logger).CreateFromConfiguration<string>(ruleConfig);
 
-        var validated   = await validator(null!, nameof(ContactDto));
+        var validated   = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -68,7 +68,7 @@ public class StringLengthValidatorFactory_Tests
         var logger    = new InMemoryLoggerFactory().CreateLogger<StringLengthValidatorFactory>();
         var validator = new StringLengthValidatorFactory(logger).CreateFromConfiguration<string>(null!);
 
-        var validated = await validator(contact.FamilyName, nameof(ContactDto));
+        var validated = await validator(contact.FamilyName, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -87,7 +87,7 @@ public class StringLengthValidatorFactory_Tests
         var logger = new InMemoryLoggerFactory().CreateLogger<StringLengthValidatorFactory>();
         var validator = new StringLengthValidatorFactory(logger).CreateFromConfiguration<string>(null!);
 
-        var validated = await validator(null!, nameof(ContactDto));
+        var validated = await validator(null!, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
@@ -104,7 +104,7 @@ public class StringLengthValidatorFactory_Tests
         var validator = new StringLengthValidatorFactory(logger).CreateFromConfiguration<int>(ruleConfig);
 
 
-        var validated = await validator(42, nameof(ContactDto));
+        var validated = await validator(42, nameof(ContactDto), cancellationToken: TestContext.Current.CancellationToken);
 
         using (new AssertionScope())
         {
