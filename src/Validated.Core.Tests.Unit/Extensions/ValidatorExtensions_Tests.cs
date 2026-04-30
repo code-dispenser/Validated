@@ -646,7 +646,7 @@ public class ValidatorExtensions_Tests
                 return ValidatorExtensions.ForNestedEntityMember<Child, Parent>(
                    c => c.Parent,
                    parentValidator // Captured by reference via closure
-               )(child, path, context,CancellationToken.None);
+               )(child, path, context, TestContext.Current.CancellationToken);
             }
 
             childValidator = ValidatedExtensions.Combine(childNameValidator, childAgeValidator, childParentValidatorLazy);
