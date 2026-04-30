@@ -14,9 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.10" />
-    <PackageReference Include="Validated.Core" Version="1.2.0" />
+    <PackageReference Include="Autofac" Version="9.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.7" />
+    <PackageReference Include="Validated.Core" Version="1.2.1" />
   </ItemGroup>
 
 </Project>
