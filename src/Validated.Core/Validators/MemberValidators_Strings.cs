@@ -45,7 +45,7 @@ public static partial class MemberValidators
         {
             if (String.IsNullOrWhiteSpace(valueToValidate?.ToString())) return CreateInvalidWithDefaultFormatting<string>("", path, propertyName, displayName, failureMessage);
 
-            if (Regex.IsMatch(valueToValidate.Trim(), pattern)) return Task.FromResult(Validated<string>.Valid(valueToValidate!.Trim()));
+            if (Regex.IsMatch(valueToValidate, pattern)) return Task.FromResult(Validated<string>.Valid(valueToValidate));
             
             return CreateInvalidWithDefaultFormatting<string>("", path, propertyName, displayName, failureMessage);
         };
