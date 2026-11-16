@@ -59,16 +59,35 @@ public class RangeValidatorFactory_Tests
         => await RunRangeValidation<DateOnly>(DateOnly.Parse(valueToValidate), minValue, maxValue, "MinMaxToValueType_DateOnly", shouldPass);
 
 
+    //[Theory]
+    //[InlineData(15.55, "10.10", "20.20", true)]
+    //[InlineData(10.10, "10.10", "20.20", true)]
+    //[InlineData(20.20, "10.10", "20.20", true)]
+    //[InlineData(10.05, "10.10", "20.20", false)]
+    //[InlineData(20.25, "10.10", "20.20", false)]
+    //public async Task Create_from_configuration_should_validate_decimal_returning_a_valid_or_invalid_validated_as_appropriate(decimal valueToValidate, string minValue, string maxValue, bool shouldPass)
+
+    //=> await RunRangeValidation<decimal>(valueToValidate, minValue, maxValue, "MinMaxToValueType_Decimal", shouldPass);
+
+
+    /*
+        * NET 11: double/float→decimal conversions (including Convert.ToDecimal and the explicit cast) are now correctly rounded instead of rounding to 15 (double) or 7 (float) digits. 
+     */
+
+    public static TheoryData<decimal, string, string, bool> DecimalRangeData => new()  
+    {
+        { 15.55m, "10.10", "20.20", true  },
+        { 10.10m, "10.10", "20.20", true  },
+        { 20.20m, "10.10", "20.20", true  },
+        { 10.05m, "10.10", "20.20", false },
+        { 20.25m, "10.10", "20.20", false },
+    };
+
     [Theory]
-    [InlineData(15.55, "10.10", "20.20", true)]
-    [InlineData(10.10, "10.10", "20.20", true)]
-    [InlineData(20.20, "10.10", "20.20", true)]
-    [InlineData(10.05, "10.10", "20.20", false)]
-    [InlineData(20.25, "10.10", "20.20", false)]
+    [MemberData(nameof(DecimalRangeData))]
     public async Task Create_from_configuration_should_validate_decimal_returning_a_valid_or_invalid_validated_as_appropriate(decimal valueToValidate, string minValue, string maxValue, bool shouldPass)
 
-    => await RunRangeValidation<decimal>(valueToValidate, minValue, maxValue, "MinMaxToValueType_Decimal", shouldPass);
-
+        => await RunRangeValidation<decimal>(valueToValidate, minValue, maxValue, "MinMaxToValueType_Decimal", shouldPass);
 
     [Theory]
     [InlineData("1990-01-01T01:01:01", "1980-01-01T10:10:10", "2020-01-01T20:20:20", true)]
